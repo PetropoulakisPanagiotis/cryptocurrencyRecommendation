@@ -42,13 +42,15 @@ User::User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std
     this->allPosts = &allPosts;
     this->totalPosts = this->idPosts.size();
 
-    /* Set unknown coins */
+    /* Initialize sentimen and unknownCoins */
     vector<string>& coinsRef = &this->coins;
-    for(i = 0; i < this->coinsRef.size(); i++)
+    for(i = 0; i < this->coinsRef.size(); i++){
         this->unknownCoins.push_back(0);
+        this->sentiment.push_back(0);
+    } // End for
 
     /* Fix sentiment */
-    fixSentiment(this->sentiment, this->unknownCoins, this->idPosts, this->allCoins, this->coins, this->lexicon, this->allPosts, status);
+    fixSentimentConstructor(this->sentiment, this->unknownCoins, this->idPosts, this->allCoins, this->coins, this->lexicon, this->allPosts, status);
     if(status != SUCCESS){
         this->id = -1;
         return;
