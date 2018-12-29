@@ -43,8 +43,8 @@ User::User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std
     this->totalPosts = this->idPosts.size();
 
     /* Initialize sentimen and unknownCoins */
-    vector<string>& coinsRef = &this->coins;
-    for(i = 0; i < this->coinsRef.size(); i++){
+    vector<string>& coinsRef = *this->coins;
+    for(i = 0; i < coinsRef.size(); i++){
         this->unknownCoins.push_back(0);
         this->sentiment.push_back(0);
     } // End for
@@ -55,6 +55,77 @@ User::User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std
         this->id = -1;
         return;
     }
+}
+
+
+////////////////
+/*  Accessors */
+////////////////
+
+
+/* Get user id */
+int User::getId(errorCode& status){
+
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_USER;
+        return -1;
+    }
+
+    return this->id;
+}
+
+/* Get all ids of posts */
+vector<int>* User::getIdPosts(errorCode& status){
+
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_USER;
+        return NULL;
+    }
+
+    return &this->idPosts;
+}
+
+/* Get sentiment of the user */
+vector<double>* User::getSentiment(errorCode& status){
+
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_USER;
+        return NULL;
+    }
+
+    return &this->sentiment;
+}
+
+/* Get indexes of unknown coins of the user */
+vector<int>* User::getUnknownCoins(errorCode& status){
+
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_USER;
+        return NULL;
+    }
+
+    return &this->unknownCoins;
+}
+
+/* Get number of post */
+int User::getSizeOfPosts(errorCode& status){
+
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_USER;
+        return -1;
+    }
+
+    return this->totalPosts;
 }
 
 // PetropoulakisPanagiotis

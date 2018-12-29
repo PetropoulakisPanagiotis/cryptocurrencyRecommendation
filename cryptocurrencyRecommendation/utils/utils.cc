@@ -324,6 +324,10 @@ void printError(errorCode& status){
         case(INVALID_USER_ID):
             cout << "Please give valid id of user\n";
             break;
+
+        case(INVALID_USER):
+            cout << "Given user has not been created properly\n";
+            break;
     } // End switch
 }
 

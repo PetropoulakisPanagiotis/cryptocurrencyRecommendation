@@ -64,7 +64,8 @@ typedef enum errorCode{
     INVALID_LEXICON,
     INVALID_COINS,
     INVALID_POSTS,
-    INVALID_USER_ID
+    INVALID_USER_ID,
+    INVALID_USER
 }errorCode;
 
 ///////////////////////

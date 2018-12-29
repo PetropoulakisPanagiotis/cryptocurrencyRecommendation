@@ -24,7 +24,14 @@ class User{
     public:
         User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, std::vector<ItemToken>& allPosts, errorCode& status);
 
+        /* Recommend coins in current user based on given neighbors */
+        void recommend(std::vector<User>& neighborUsers, std::vector<int>& newCoins, errorCode& status);
+
         /* Accessors */
         int getId(errorCode& status);
+        std::vector<int>* getIdPosts(errorCode& status);
+        std::vector<double>* getSentiment(errorCode& status);
+        std::vector<int>* getUnknownCoins(errorCode& status);
+        int getSizeOfPosts(errorCode& status);
 };
 // PetropoulakisPanagiotis

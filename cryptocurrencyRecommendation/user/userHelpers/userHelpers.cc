@@ -81,9 +81,26 @@ void sentimentScaling(vector<double>& sentiment, double alpha=15){
     } // End for - scaling
 }
 
-/* Normalize sentiment: (-1, 1) */
+/* Normalize sentiment: sentiment[i] - average(sentiment) */
 void sentimentNormalization(vector<double>& sentiment, vector<int>& unknownCoins){
+    int i, totalActiveCoins = 0;
+    double avgSentiment = 0;
 
+    /* Find average sentiment */
+    for(i = 0; i < sentiment.size(); i++){
+        if(unknownCoins[i] != 0){
+            avgSentiment += sentiment[i];
+            totalActiveCoins++;
+        }
+    } // End for - Find average sentiment 
+
+    /* Fix avg */
+    if(totalActiveCoins != 0)
+        avgSentiment /= totalActiveCoins;
+
+    /* Normalize sentiment */
+    for(i = 0; i < sentiment.size(); i++)
+        sentiment[i] -= avgSentiment;
 }
 
 /* Find sentiment from current post and fix overall sentiment */
