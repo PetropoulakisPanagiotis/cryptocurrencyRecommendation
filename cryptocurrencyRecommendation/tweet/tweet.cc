@@ -9,7 +9,7 @@ using namespace std;
 ///////////////////////////////////
 /* Implementation of tweet class */
 ///////////////////////////////////
-static int count = 0;
+int Tweet::count = 0;
 
 /* Create tweet by given tokens */
 Tweet::Tweet(vector<string>& tokens, errorCode& status){
@@ -41,6 +41,19 @@ Tweet::Tweet(vector<string>& tokens, errorCode& status){
 ///////////////
 /* Accessors */
 ///////////////
+
+/* Get id of current tweet */
+int Tweet::getId(errorCode& status){
+
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_TWEET;
+        return -1;
+    }
+
+    return this->id;
+}
 
 /* Get size of tweet */
 int Tweet::getSizeTokens(errorCode& status){
