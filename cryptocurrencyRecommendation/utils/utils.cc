@@ -292,6 +292,10 @@ void printError(errorCode& status){
         case(INVALID_COEF_RADIUS):
             cout << "Please give an apropriate radius coefficient[" + to_string(MIN_COEF_RADIUS) + "," + to_string(MAX_COEF_RADIUS) +"]\n";
             break;
+
+        case(INVALID_TWEET):
+            cout << "Tweet has not created properly\n";
+            break;
     } // End switch
 }
 

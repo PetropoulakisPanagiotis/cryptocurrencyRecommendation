@@ -54,7 +54,8 @@ typedef enum errorCode{
     INVALID_ALGO,
     INVALID_TOL,
     INVALID_CONF,
-    INVALID_COEF_RADIUS
+    INVALID_COEF_RADIUS,
+    INVALID_TWEET
 }errorCode;
 
 ///////////////////////
