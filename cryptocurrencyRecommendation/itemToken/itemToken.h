@@ -3,8 +3,8 @@
 #include <vector>
 #include "../utils/utils.h"
 
-/* Tweet class contains a tweet with tokens */
-class Tweet{
+/* Item token class contains tokens */
+class ItemToken{
     private:
         int id;
         std::vector<std::string> tokens;
@@ -12,7 +12,7 @@ class Tweet{
         static int count;
 
     public:
-        Tweet(std::vector<std::string>& tokens, errorCode& status);
+        ItemToken(std::vector<std::string>& tokens, errorCode& status);
 
         /* Accessors */
         int getId(errorCode& status);

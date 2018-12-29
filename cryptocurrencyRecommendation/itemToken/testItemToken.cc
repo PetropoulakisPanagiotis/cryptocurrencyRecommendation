@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include "../utils/utils.h"
-#include "tweet.h"
+#include "itemToken.h"
 
 using namespace std;
 
@@ -17,10 +17,10 @@ int main(void){
     x2.push_back("hallo");
     x2.push_back("papas");
 
-    Tweet tweet1(x1,status);
+    ItemToken tweet1(x1,status);
     printError(status);
 
-    Tweet tweet2(x2,status);
+    ItemToken tweet2(x2,status);
     printError(status);
 
     cout << "tweet1: " << tweet1.getId(status) << "\n";
@@ -39,3 +39,4 @@ int main(void){
 
     return 0;
 }
+// PetropoulakisPanagiotis

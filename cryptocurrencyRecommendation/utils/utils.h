@@ -27,6 +27,8 @@
 #define MAX_TOL 1
 #define MAX_COEF_RADIUS 100
 #define MIN_COEF_RADIUS 0.001
+#define MAX_ID_POSTS 10000 // Max posts per user
+#define MAX_POSTS 50000000 // Max posts for recommendation
 
 /* Errors */
 typedef enum errorCode{
@@ -55,7 +57,14 @@ typedef enum errorCode{
     INVALID_TOL,
     INVALID_CONF,
     INVALID_COEF_RADIUS,
-    INVALID_TWEET
+    INVALID_ITEM_TOKEN,
+    INVALID_TOKENS,
+    INVALID_ID_POSTS,
+    INVALID_ALL_COINS,
+    INVALID_LEXICON,
+    INVALID_COINS,
+    INVALID_POSTS,
+    INVALID_USER_ID
 }errorCode;
 
 ///////////////////////

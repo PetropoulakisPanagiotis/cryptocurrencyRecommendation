@@ -2,24 +2,24 @@
 #include <vector>
 #include <string>
 #include "../utils/utils.h"
-#include "tweet.h"
+#include "itemToken.h"
 
 using namespace std;
 
-///////////////////////////////////
-/* Implementation of tweet class */
-///////////////////////////////////
-int Tweet::count = 0;
+////////////////////////////////////////
+/* Implementation of item token class */
+////////////////////////////////////////
+int ItemToken::count = 0;
 
-/* Create tweet by given tokens */
-Tweet::Tweet(vector<string>& tokens, errorCode& status){
+/* Create item by given tokens */
+ItemToken::ItemToken(vector<string>& tokens, errorCode& status){
 
     status = SUCCESS;
 
     /* Check parameters */
     if(tokens.size() == 0){
         this->id = -1;
-        status = INVALID_TWEET;
+        status = INVALID_TOKENS;
     }
     else{
 
@@ -43,12 +43,12 @@ Tweet::Tweet(vector<string>& tokens, errorCode& status){
 ///////////////
 
 /* Get id of current tweet */
-int Tweet::getId(errorCode& status){
+int ItemToken::getId(errorCode& status){
 
     status = SUCCESS;
 
     if(this->id == -1){
-        status = INVALID_TWEET;
+        status = INVALID_ITEM_TOKEN;
         return -1;
     }
 
@@ -56,12 +56,12 @@ int Tweet::getId(errorCode& status){
 }
 
 /* Get size of tweet */
-int Tweet::getSizeTokens(errorCode& status){
+int ItemToken::getSizeTokens(errorCode& status){
 
     status = SUCCESS;
 
     if(this->id == -1){
-        status = INVALID_TWEET;
+        status = INVALID_ITEM_TOKEN;
         return -1;
     }
 
@@ -69,12 +69,12 @@ int Tweet::getSizeTokens(errorCode& status){
 }
 
 /* Get token by given index */
-string Tweet::getToken(int index, errorCode& status){
+string ItemToken::getToken(int index, errorCode& status){
 
     status = SUCCESS;
 
     if(this->id == -1){
-        status = INVALID_TWEET;
+        status = INVALID_ITEM_TOKEN;
         return "";
     }
 
@@ -87,11 +87,11 @@ string Tweet::getToken(int index, errorCode& status){
 }
 
 /* Get all tokens */
-vector<string>* Tweet::getTokens(errorCode& status){
+vector<string>* ItemToken::getTokens(errorCode& status){
     status = SUCCESS;
 
     if(this->id == -1){
-        status = INVALID_TWEET;
+        status = INVALID_ITEM_TOKEN;
         return NULL;
     }
 

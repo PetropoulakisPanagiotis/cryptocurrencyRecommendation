@@ -293,8 +293,36 @@ void printError(errorCode& status){
             cout << "Please give an apropriate radius coefficient[" + to_string(MIN_COEF_RADIUS) + "," + to_string(MAX_COEF_RADIUS) +"]\n";
             break;
 
-        case(INVALID_TWEET):
-            cout << "Tweet has not created properly\n";
+        case(INVALID_ITEM_TOKEN):
+            cout << "Item token has not been created properly\n";
+            break;
+
+        case(INVALID_TOKENS):
+            cout << "Please give valid tokens\n";
+            break;
+
+        case(INVALID_ID_POSTS):
+            cout << "Please give valid posts\n";
+            break;
+
+        case(INVALID_ALL_COINS):
+            cout << "Please give valid coins\n";
+            break;
+
+        case(INVALID_LEXICON):
+            cout << "Please give valid lexicon\n";
+            break;
+
+        case(INVALID_COINS):
+            cout << "Please give valid categories of coins\n";
+            break;
+
+        case(INVALID_POSTS):
+            cout << "Please give valid posts\n";
+            break;
+
+        case(INVALID_USER_ID):
+            cout << "Please give valid id of user\n";
             break;
     } // End switch
 }
