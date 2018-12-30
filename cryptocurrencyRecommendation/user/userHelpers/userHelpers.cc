@@ -108,7 +108,7 @@ void fixSentiment(vector<double>& sentiment, vector<int>& unknownCoins, vector<u
     vector<int> coinsOfPost; // Coins that current post reference to
     string currToken;
     int totalTokens, totalUniqueCoins; // Tokens in post and number of coins
-    int i, j;
+    int i, j, tokenIsCoin;
     unordered_set<string>::iterator coinsIter; // Scan coins set
     double scorePost = 0; // Score of current post
 
@@ -135,6 +135,8 @@ void fixSentiment(vector<double>& sentiment, vector<int>& unknownCoins, vector<u
         if(status != SUCCESS)
             return;
 
+        tokenIsCoin = 0;
+
         /* Check if token is a coin */
         for(j = 0; j < totalUniqueCoins; j++){
 
@@ -148,9 +150,14 @@ void fixSentiment(vector<double>& sentiment, vector<int>& unknownCoins, vector<u
                 /* Coin is known */
                 if(unknownCoins[j] == 0)
                     unknownCoins[j] = 1;
+
+                tokenIsCoin = 1;
                 break;
             }
         } // End for - Check if token is a coin
+
+        if(tokenIsCoin == 1)
+            continue;
 
         /* Find score for current token */
         scorePost += lexicon[currToken];

@@ -16,7 +16,7 @@ using namespace std;
 ///////////////////////////////////
 
 /* Constructor: set members, find overall sentiment, scale and normalize it */
-User::User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, std::vector<ItemToken>& allPosts, errorCode& status){
+User::User(int id, vector<int>& idPosts, vector<unordered_set<string> >& allCoins, vector<string>& coins, unordered_map<string, double>& lexicon, vector<ItemToken>& allPosts, errorCode& status){
     int i;
 
     status = SUCCESS;
@@ -37,7 +37,7 @@ User::User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std
     this->coins = &coins;
     this->lexicon = &lexicon;
     this->allPosts = &allPosts;
-    this->totalPosts = this->idPosts.size();
+    this->totalPosts = idPosts.size();
 
     setIdPostsConstructor(this->idPosts, idPosts, status);
     if(status != SUCCESS){
@@ -59,7 +59,7 @@ User::User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std
         this->id = -1;
         return;
     }
-}
+
 
 /* Recommend the best(p) coins in current user based on given neighbors */
 void User::recommend(int p, vector<User>& neighborUsers, vector<int>& newCoins, errorCode& status){
