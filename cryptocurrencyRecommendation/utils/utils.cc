@@ -328,6 +328,14 @@ void printError(errorCode& status){
         case(INVALID_USER):
             cout << "Given user has not been created properly\n";
             break;
+
+        case(INVALID_USER_NEIGHBORS):
+            cout << "Please give valid user neighbors\n";
+            break;
+
+        case(INVALID_P):
+            cout << "Please give valid value of p\n";
+            break;
     } // End switch
 }
 

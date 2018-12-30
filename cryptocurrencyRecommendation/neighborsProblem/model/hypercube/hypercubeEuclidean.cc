@@ -219,7 +219,7 @@ void hypercubeEuclidean::radiusNeighbors(Item& query, int radius, list<Item>& ne
 
     /* Check probes vertices for neighbors */
     for(i = 0; i < this->probes; i++){
-   
+
         /* Check initial pos */
         if(i == 0)
             pos = initialPos;

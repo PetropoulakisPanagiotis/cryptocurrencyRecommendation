@@ -7,6 +7,23 @@
 #include "../../itemToken/itemToken.h"
 #include "../user.h"
 
+/* Stracture for recommendation  */
+/* Use it for heap and extract p */
+/* highest nodes                 */
+typedef struct newCoinNode{
+    int pos;
+    double val;
+
+    newCoinNode(int pos, double val):pos(pos), val(val){}
+}newCoinNode;
+
+/* Create a compare class based in val of coin node*/
+struct newCoinNodeCompare{
+    bool operator()(const newCoinNode& x, const newCoinNode& y) const{
+        return x.val < y.val;
+    }
+};
+
 /////////////////////////
 /* Constructor helpers */
 /////////////////////////
@@ -22,4 +39,9 @@ void sentimentNormalization(std::vector<double>& sentiment, std::vector<int>& un
 /* Fix overall sentiment */
 void fixSentiment(std::vector<double>& sentiment, std::vector<int>& unknownCoins, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, int idPost, std::vector<ItemToken>& allPosts, errorCode& status);
 void fixSentimentConstructor(std::vector<double>& sentiment, std::vector<int>& unknownCoins, std::vector<int>& idPosts, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, std::vector<ItemToken>& allPosts, errorCode& status);
+
+/* Norm, inner product and similarity function */
+double norm(std::vector<double>& x, errorCode& status);
+double innerProduct(std::vector<double>& x, std::vector<double>& y, errorCode& status);
+double similarityFunc(std::vector<double>& x, std::vector<double>& y, errorCode& status);
 // PetropoulakisPanagiotis

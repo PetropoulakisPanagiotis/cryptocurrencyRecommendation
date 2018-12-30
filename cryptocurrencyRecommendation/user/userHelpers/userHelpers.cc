@@ -7,6 +7,7 @@
 #include <cmath>
 #include "../../utils/utils.h"
 #include "../../itemToken/itemToken.h"
+#include "../user.h"
 
 using namespace std;
 
@@ -174,5 +175,99 @@ void fixSentimentConstructor(vector<double>& sentiment, vector<int>& unknownCoin
     sentimentNormalization(sentiment, unknownCoins);
 }
 
+/* Norm of vector */
+double norm(vector<double>& x, errorCode& status){
+    double norm = 0, tempMult;
+    int i;
+
+    status = SUCCESS;
+
+    /* Check dimensions */
+    if(x.size() == 0){
+        status = INVALID_DIM;
+        return -1;
+    }
+
+    /* Calculate norm */
+    for(i = 0; i < x.size(); i++){
+        tempMult = x[i] * x[i];
+
+        norm += tempMult;
+    } // End for
+
+    norm = sqrt(norm);
+
+    return norm;
+}
+
+/* Calculate inner product of two vectors */
+double innerProduct(vector<double>& x, vector<double>& y, errorCode& status){
+    double product = 0, tempMult;
+    int i;
+
+    status = SUCCESS;
+
+    /* Check dimensions */
+    if(x.size() == 0 || y.size() == 0){
+        status = INVALID_DIM;
+        return -1;
+    }
+
+    if(x.size() != y.size()){
+        status = INVALID_DIM;
+        return -1;
+    }
+
+    /* Calculate product */
+    for(i = 0; i < x.size(); i++){
+        tempMult = x[i] * y[i];
+
+        product += tempMult;
+    } // End for
+
+    return product;
+}
+
+/* Similarity function of two vectors */
+double similarityFunc(std::vector<double>& x, std::vector<double>& y, errorCode& status){
+    double dist = 0, mult;
+    double normX, normY;
+
+    status = SUCCESS;
+
+    /* Check dimensions */
+    if(x.size() == 0 || y.size() == 0){
+        status = INVALID_DIM;
+        return -1;
+    }
+
+    if(x.size() != y.size()){
+        status = INVALID_DIM;
+        return -1;
+    }
+
+    dist = innerProduct(x, y, status);
+    if(status != SUCCESS)
+        return -1;
+
+    normX = norm(x, status);
+    if(status != SUCCESS)
+        return -1;
+
+    normY = norm(y, status);
+    if(status != SUCCESS)
+        return -1;
+
+    mult = normX * normY;
+
+    if(mult == 0){
+        status = DIV_OVERFLOW;
+        return -1;
+    }
+
+    dist = dist /  mult;
+
+    return dist;
+}
 
 // PetropoulakisPanagiotis

@@ -65,7 +65,9 @@ typedef enum errorCode{
     INVALID_COINS,
     INVALID_POSTS,
     INVALID_USER_ID,
-    INVALID_USER
+    INVALID_USER,
+    INVALID_USER_NEIGHBORS,
+    INVALID_P
 }errorCode;
 
 ///////////////////////

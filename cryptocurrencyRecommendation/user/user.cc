@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
+#include <algorithm>
 #include "../itemToken/itemToken.h"
 #include "../utils/utils.h"
 #include "userHelpers/userHelpers.h"
@@ -58,10 +59,78 @@ User::User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std
 }
 
 
+/* Recommend the best(p) coins in current user based on given neighbors */
+void User::recommend(int p, vector<User>& neighborUsers, vector<int>& newCoins, errorCode& status){
+    int i, totalUnknown = 0;
+    double similaritySum = 0;
+    double normalizingFactor = 0, currVal;
+    vector<newCoinNode> coinsHeap; // Keep p best coins
+
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_USER;
+        return;
+    }
+
+    /* Check parameters */
+    if(p <= 0 || p > neighborUsers.size()){
+        status = INVALID_P;
+        return;
+    }
+
+    if(neighborUsers.size() == 0){
+        status = INVALID_USER_NEIGHBORS;
+        return;
+    }
+
+    /* Reset new coins */
+    newCoins.clear();
+
+    /* Find similarity sum only once with neighbors */
+    for(i = 0; i < neighborUsers.size(); i++){
+        similaritySum += similarityFunc(this->sentiment, neighborUsers[i].sentiment, status);
+        if(status != SUCCESS)
+            return; 
+    } // End for
+
+    /* Fix normalizing factor */
+    if(similaritySum == 0){
+        status = DIV_OVERFLOW;
+        return;
+    }
+
+    normalizingFactor = 1 / similaritySum;
+
+    /* For every unkown coin predict user's behavior */
+    for(i = 0; this->unknownCoins.size(); i++){
+
+        /* Known coin */
+        if(this->unknownCoins[i] == 1)
+            continue;
+        else
+            totalUnknown++;
+
+        currVal = normalizingFactor * similaritySum * this->sentiment[i];
+
+        coinsHeap.push_back(newCoinNode(i, currVal));
+    } // End for - unknown coins
+
+    /* Create heap */
+    make_heap(coinsHeap.begin(), coinsHeap.end(), newCoinNodeCompare());
+
+    /* Fix p if unkown coins are less than p */
+    if(p > totalUnknown)
+        p = totalUnknown;
+
+    /* Exctract best p coins */
+    for(i = 0; i < p; i++)
+        newCoins.push_back(coinsHeap.front().pos);
+}
+
 ////////////////
 /*  Accessors */
 ////////////////
-
 
 /* Get user id */
 int User::getId(errorCode& status){
@@ -115,6 +184,22 @@ vector<int>* User::getUnknownCoins(errorCode& status){
     return &this->unknownCoins;
 }
 
+/* Get unknown value of given index */
+int User::getUnknownCoin(int index, errorCode& status){
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_USER;
+        return -1;
+    }
+
+    if(index < 0 || index >= this->unknownCoins.size()){
+        status = INVALID_INDEX;
+        return -1;
+    }
+
+    return this->unknownCoins[index];
+}
 /* Get number of post */
 int User::getSizeOfPosts(errorCode& status){
 
