@@ -12,8 +12,6 @@
 using namespace std;
 
 /* Check parameters of constructor */
-/* Success: 0                      */
-/* Failure: -1                      */
 void checkParamsConstructor(int id, vector<int>& idPosts, vector<unordered_set<string> >& allCoins, vector<string>& coins, unordered_map<string, double>& lexicon, vector<ItemToken>& allPosts, errorCode& status){
 
     status = SUCCESS;
@@ -46,10 +44,9 @@ void checkParamsConstructor(int id, vector<int>& idPosts, vector<unordered_set<s
 
 /* Copy id posts */
 void setIdPostsConstructor(vector<int>& xIdPosts, vector<int>& yIdPosts, errorCode& status){
+    int i;
 
     status = SUCCESS;
-
-    int i;
 
     /* Scan y id posts */
     for(i = 0; i < yIdPosts.size(); i++){
@@ -97,34 +94,40 @@ void sentimentNormalization(vector<double>& sentiment, vector<int>& unknownCoins
 
     /* Fix avg */
     if(totalActiveCoins != 0)
-        avgSentiment /= totalActiveCoins;
+        avgSentiment /= (double)totalActiveCoins;
+    else
+        return;
 
     /* Normalize sentiment */
     for(i = 0; i < sentiment.size(); i++)
         sentiment[i] -= avgSentiment;
 }
 
-/* Find sentiment from current post and fix overall sentiment */
+/* Find sentiment from current post and fix the overall sentiment */
 void fixSentiment(vector<double>& sentiment, vector<int>& unknownCoins, vector<unordered_set<string> >& allCoins, vector<string>& coins, unordered_map<string, double>& lexicon, int idPost, vector<ItemToken>& allPosts, errorCode& status){
-
-    status = SUCCESS;
-
-    /* Coins that current post reference to */
-    vector<int> coinsOfPost;
+    vector<int> coinsOfPost; // Coins that current post reference to
     string currToken;
     int totalTokens, totalUniqueCoins; // Tokens in post and number of coins
     int i, j;
-    unordered_set<string>::iterator coinsIter;
-    double scorePost = 0;
+    unordered_set<string>::iterator coinsIter; // Scan coins set
+    double scorePost = 0; // Score of current post
 
-    /* Set size */
+    status = SUCCESS;
+
+    /* Set number of tokens of current post */
     totalTokens = allPosts[idPost].getSizeTokens(status);
     if(status != SUCCESS)
         return;
 
+    if(totalTokens <= 0){
+        status = INVALID_POSTS;
+        return;
+    }
+
+    /* Get the number of unique coins */
     totalUniqueCoins = coins.size();
 
-    /* Scan post */
+    /* Scan post - per token */
     for(i = 0; i < totalTokens; i++){
 
         /* Get current token */
@@ -134,18 +137,20 @@ void fixSentiment(vector<double>& sentiment, vector<int>& unknownCoins, vector<u
 
         /* Check if token is a coin */
         for(j = 0; j < totalUniqueCoins; j++){
+
+            /* Scan current set */
             coinsIter = allCoins[j].find(currToken);
 
             /* Token is a coin */
             if(coinsIter != allCoins[j].end()){
-                coinsOfPost.push_back(j);
+                coinsOfPost.push_back(j); // Post is reference in current coin
 
                 /* Coin is known */
                 if(unknownCoins[j] == 0)
                     unknownCoins[j] = 1;
                 break;
             }
-        } // End for - Check token if it is a coin
+        } // End for - Check if token is a coin
 
         /* Find score for current token */
         scorePost += lexicon[currToken];
@@ -162,16 +167,17 @@ void fixSentimentConstructor(vector<double>& sentiment, vector<int>& unknownCoin
 
     status = SUCCESS;
 
+    /* Scan all posts of the user */
     for(i = 0; i < idPosts.size(); i++){
 
-        /* Find sentiment from current post and fix overall sentiment */
+        /* Find sentiment from current post and fix the overall sentiment */
         fixSentiment(sentiment, unknownCoins, allCoins, coins, lexicon, idPosts[i], allPosts, status);
         if(status != SUCCESS)
             return;
     } // For every post fix overall sentiment
 
     /* Scale and normalize sentiment */
-    sentimentScaling(sentiment); 
+    sentimentScaling(sentiment);
     sentimentNormalization(sentiment, unknownCoins);
 }
 

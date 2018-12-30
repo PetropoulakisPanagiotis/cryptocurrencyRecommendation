@@ -17,30 +17,34 @@ typedef struct newCoinNode{
     newCoinNode(int pos, double val):pos(pos), val(val){}
 }newCoinNode;
 
-/* Create a compare class based in val of coin node*/
+/* Create a compare class based on val of coin node */
 struct newCoinNodeCompare{
     bool operator()(const newCoinNode& x, const newCoinNode& y) const{
         return x.val < y.val;
     }
 };
 
-/////////////////////////
-/* Constructor helpers */
-/////////////////////////
+///////////////////////////////
+/* Constructor basic helpers */
+///////////////////////////////
 void checkParamsConstructor(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, std::vector<ItemToken>& allPosts, errorCode& status);
 void setIdPostsConstructor(std::vector<int>& xIdPosts, std::vector<int>& yIdPosts, errorCode& status);
 
 ///////////////////////////////
 /* Scaling and normalization */
 ///////////////////////////////
-void sentimentScaling(std::vector<double>& sentiment, double alpha); 
-void sentimentNormalization(std::vector<double>& sentiment, std::vector<int>& unknownCoins); 
+void sentimentScaling(std::vector<double>& sentiment, double alpha);
+void sentimentNormalization(std::vector<double>& sentiment, std::vector<int>& unknownCoins);
 
-/* Fix overall sentiment */
+///////////////////////
+/* Sentiment helpers */
+///////////////////////
 void fixSentiment(std::vector<double>& sentiment, std::vector<int>& unknownCoins, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, int idPost, std::vector<ItemToken>& allPosts, errorCode& status);
 void fixSentimentConstructor(std::vector<double>& sentiment, std::vector<int>& unknownCoins, std::vector<int>& idPosts, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, std::vector<ItemToken>& allPosts, errorCode& status);
 
-/* Norm, inner product and similarity function */
+//////////////////////////////////////////////////////////////////
+/* Norm, inner product and similarity function - for users, etc */
+//////////////////////////////////////////////////////////////////
 double norm(std::vector<double>& x, errorCode& status);
 double innerProduct(std::vector<double>& x, std::vector<double>& y, errorCode& status);
 double similarityFunc(std::vector<double>& x, std::vector<double>& y, errorCode& status);

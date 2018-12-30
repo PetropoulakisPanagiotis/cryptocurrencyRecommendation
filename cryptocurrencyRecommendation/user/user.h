@@ -7,8 +7,8 @@
 #include "../utils/utils.h"
 
 /* User class: each user has some texts and an overall sentiment */
-/* Note: user have access to sets(coins,lexicon,tweets)          */
-/* Make sure that sets are valid                                 */
+/* Note: user have access to sets(coins,lexicon,posts)           */
+/* Make sure that sets are valid!!!                              */
 class User{
     private:
         int id;
@@ -16,10 +16,10 @@ class User{
         std::vector<double> sentiment; // Overall sentiment
         std::vector<int> unknownCoins; // 0 -> Unknown
         std::vector<std::unordered_set<std::string> >* allCoins;
-        std::vector<std::string>* coins;
-        std::unordered_map<std::string, double>* lexicon;
+        std::vector<std::string>* coins; // Unique names of coins
+        std::unordered_map<std::string, double>* lexicon; // Map: token -> score
         std::vector<ItemToken>* allPosts; // All posts
-        int totalPosts;
+        int totalPosts; // For user
 
     public:
         User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, std::vector<ItemToken>& allPosts, errorCode& status);

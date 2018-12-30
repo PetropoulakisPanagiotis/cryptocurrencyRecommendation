@@ -12,10 +12,10 @@
 using namespace std;
 
 ///////////////////////////////////
-/* Implementations of ucer class */
+/* Implementations of user class */
 ///////////////////////////////////
 
-/* Constructor: set members, find overall sentiment and normalize it */
+/* Constructor: set members, find overall sentiment, scale and normalize it */
 User::User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, std::vector<ItemToken>& allPosts, errorCode& status){
     int i;
 
@@ -28,8 +28,16 @@ User::User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std
         return;
     }
 
+    /////////////////
     /* Set members */
+    /////////////////
+
     this->id = id;
+    this->allCoins = &allCoins;
+    this->coins = &coins;
+    this->lexicon = &lexicon;
+    this->allPosts = &allPosts;
+    this->totalPosts = this->idPosts.size();
 
     setIdPostsConstructor(this->idPosts, idPosts, status);
     if(status != SUCCESS){
@@ -37,34 +45,27 @@ User::User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std
         return;
     }
 
-    this->allCoins = &allCoins;
-    this->coins = &coins;
-    this->lexicon = &lexicon;
-    this->allPosts = &allPosts;
-    this->totalPosts = this->idPosts.size();
-
-    /* Initialize sentimen and unknownCoins */
+    /* Initialize sentiment and unknownCoins */
     vector<string>& coinsRef = *this->coins;
+
     for(i = 0; i < coinsRef.size(); i++){
         this->unknownCoins.push_back(0);
         this->sentiment.push_back(0);
     } // End for
 
     /* Fix sentiment */
-    fixSentimentConstructor(this->sentiment, this->unknownCoins, this->idPosts, this->allCoins, this->coins, this->lexicon, this->allPosts, status);
+    fixSentimentConstructor(this->sentiment, this->unknownCoins, this->idPosts, *this->allCoins, *this->coins, *this->lexicon, *this->allPosts, status);
     if(status != SUCCESS){
         this->id = -1;
         return;
     }
 }
 
-
 /* Recommend the best(p) coins in current user based on given neighbors */
 void User::recommend(int p, vector<User>& neighborUsers, vector<int>& newCoins, errorCode& status){
-    int i, totalUnknown = 0;
-    double similaritySum = 0;
-    double normalizingFactor = 0, currVal;
-    vector<newCoinNode> coinsHeap; // Keep p best coins
+    int i, totalUnknown = 0; // Total unknown coins
+    double similaritySum = 0, normalizingFactor = 0, currVal;
+    vector<newCoinNode> coinsHeap; // Keep p best coins based on score
 
     status = SUCCESS;
 
@@ -74,7 +75,7 @@ void User::recommend(int p, vector<User>& neighborUsers, vector<int>& newCoins, 
     }
 
     /* Check parameters */
-    if(p <= 0 || p > neighborUsers.size()){
+    if(p <= 0 || p > this->coins->size()){
         status = INVALID_P;
         return;
     }
@@ -87,19 +88,19 @@ void User::recommend(int p, vector<User>& neighborUsers, vector<int>& newCoins, 
     /* Reset new coins */
     newCoins.clear();
 
-    /* Find similarity sum only once with neighbors */
+    /* Find similarity sum only once */
     for(i = 0; i < neighborUsers.size(); i++){
         similaritySum += similarityFunc(this->sentiment, neighborUsers[i].sentiment, status);
         if(status != SUCCESS)
-            return; 
+            return;
     } // End for
 
-    /* Fix normalizing factor */
     if(similaritySum == 0){
         status = DIV_OVERFLOW;
         return;
     }
 
+    /* Fix normalizing factor */
     normalizingFactor = 1 / similaritySum;
 
     /* For every unkown coin predict user's behavior */
@@ -113,8 +114,13 @@ void User::recommend(int p, vector<User>& neighborUsers, vector<int>& newCoins, 
 
         currVal = normalizingFactor * similaritySum * this->sentiment[i];
 
+        /* Add new coin in heap */
         coinsHeap.push_back(newCoinNode(i, currVal));
     } // End for - unknown coins
+
+    /* All coins are known */
+    if(totalUnknown == 0)
+        return;
 
     /* Create heap */
     make_heap(coinsHeap.begin(), coinsHeap.end(), newCoinNodeCompare());
@@ -200,6 +206,7 @@ int User::getUnknownCoin(int index, errorCode& status){
 
     return this->unknownCoins[index];
 }
+
 /* Get number of post */
 int User::getSizeOfPosts(errorCode& status){
 
@@ -212,5 +219,4 @@ int User::getSizeOfPosts(errorCode& status){
 
     return this->totalPosts;
 }
-
 // PetropoulakisPanagiotis
