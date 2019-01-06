@@ -33,14 +33,13 @@ void setIdPostsConstructor(std::vector<int>& xIdPosts, std::vector<int>& yIdPost
 ///////////////////////////////
 /* Scaling and normalization */
 ///////////////////////////////
-void sentimentScaling(std::vector<double>& sentiment, double alpha);
-void sentimentNormalization(std::vector<double>& sentiment, std::vector<int>& unknownCoins);
+int sentimentNormalization(std::vector<double>& sentiment, std::vector<int>& unknownCoins);
 
 ///////////////////////
 /* Sentiment helpers */
 ///////////////////////
 void fixSentiment(std::vector<double>& sentiment, std::vector<int>& unknownCoins, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, int idPost, std::vector<ItemToken>& allPosts, errorCode& status);
-void fixSentimentConstructor(std::vector<double>& sentiment, std::vector<int>& unknownCoins, std::vector<int>& idPosts, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, std::vector<ItemToken>& allPosts, errorCode& status);
+int fixSentimentConstructor(std::vector<double>& sentiment, std::vector<int>& unknownCoins, std::vector<int>& idPosts, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, std::vector<ItemToken>& allPosts, errorCode& status);
 
 //////////////////////////////////////////////////////////////////
 /* Norm, inner product and similarity function - for users, etc */

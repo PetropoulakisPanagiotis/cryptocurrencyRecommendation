@@ -20,12 +20,14 @@ class User{
         std::unordered_map<std::string, double>* lexicon; // Map: token -> score
         std::vector<ItemToken>* allPosts; // All posts
         int totalPosts; // For user
+        int invalid; // User has zero sentiment vector
+        double avgSentiment; // Avg value of sentiment
 
     public:
         User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, std::vector<ItemToken>& allPosts, errorCode& status);
 
         /* Recommend the best(p) coins in current user based on given neighbors */
-        void recommend(int p, std::vector<User>& neighborUsers, std::vector<int>& newCoins, errorCode& status);
+        void recommend(int p, std::vector<User*>& neighborUsers, std::vector<int>& newCoins, errorCode& status);
 
         /* Accessors */
         int getId(errorCode& status);

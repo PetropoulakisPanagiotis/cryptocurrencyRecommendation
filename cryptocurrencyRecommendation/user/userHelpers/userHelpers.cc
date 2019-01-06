@@ -59,16 +59,17 @@ void setIdPostsConstructor(vector<int>& xIdPosts, vector<int>& yIdPosts, errorCo
     } // End for
 }
 
-///////////////////////////////
-/* Scaling and normalization */
-///////////////////////////////
+///////////////////
+/* Normalization */
+///////////////////
 
 /* Scale sentiment: (-1, 1) */
-void sentimentScaling(vector<double>& sentiment, double alpha=15){
+int sentimentNormalization(vector<double>& sentiment, double alpha=15){
     int i;
+    int flag = 0; // For invalid member 
 
     if(alpha <= 0)
-        return;
+        alpha = 15;
 
     /* Scale every individual sentiment */
     for(i = 0; i < sentiment.size(); i++){
@@ -76,31 +77,11 @@ void sentimentScaling(vector<double>& sentiment, double alpha=15){
             continue;
 
         sentiment[i] = sentiment[i] / (sqrt((sentiment[i] * sentiment[i]) + alpha));
-    } // End for - scaling
-}
+        if(sentiment[i] != 0 && flag == 0)
+            flag = 1;
+    } // End for - normalization
 
-/* Normalize sentiment: sentiment[i] - average(sentiment) */
-void sentimentNormalization(vector<double>& sentiment, vector<int>& unknownCoins){
-    int i, totalActiveCoins = 0;
-    double avgSentiment = 0;
-
-    /* Find average sentiment */
-    for(i = 0; i < sentiment.size(); i++){
-        if(unknownCoins[i] != 0){
-            avgSentiment += sentiment[i];
-            totalActiveCoins++;
-        }
-    } // End for - Find average sentiment 
-
-    /* Fix avg */
-    if(totalActiveCoins != 0)
-        avgSentiment /= (double)totalActiveCoins;
-    else
-        return;
-
-    /* Normalize sentiment */
-    for(i = 0; i < sentiment.size(); i++)
-        sentiment[i] -= avgSentiment;
+    return flag;
 }
 
 /* Find sentiment from current post and fix the overall sentiment */
@@ -169,8 +150,9 @@ void fixSentiment(vector<double>& sentiment, vector<int>& unknownCoins, vector<u
 }
 
 /* Fix sentiment of the user */
-void fixSentimentConstructor(vector<double>& sentiment, vector<int>& unknownCoins, vector<int>& idPosts, vector<unordered_set<string> >& allCoins, vector<string>& coins, unordered_map<string, double>& lexicon, vector<ItemToken>& allPosts, errorCode& status){
+int fixSentimentConstructor(vector<double>& sentiment, vector<int>& unknownCoins, vector<int>& idPosts, vector<unordered_set<string> >& allCoins, vector<string>& coins, unordered_map<string, double>& lexicon, vector<ItemToken>& allPosts, errorCode& status){
     int i;
+    int flag;
 
     status = SUCCESS;
 
@@ -180,12 +162,13 @@ void fixSentimentConstructor(vector<double>& sentiment, vector<int>& unknownCoin
         /* Find sentiment from current post and fix the overall sentiment */
         fixSentiment(sentiment, unknownCoins, allCoins, coins, lexicon, idPosts[i], allPosts, status);
         if(status != SUCCESS)
-            return;
+            return -1;
     } // For every post fix overall sentiment
 
-    /* Scale and normalize sentiment */
-    sentimentScaling(sentiment);
-    sentimentNormalization(sentiment, unknownCoins);
+    /* Normalize sentiment */
+    flag = sentimentNormalization(sentiment);
+
+    return flag;
 }
 
 /* Norm of vector */

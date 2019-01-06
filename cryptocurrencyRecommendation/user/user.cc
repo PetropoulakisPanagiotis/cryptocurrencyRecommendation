@@ -4,6 +4,8 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <algorithm>
+#include <chrono>
+#include <random>
 #include "../itemToken/itemToken.h"
 #include "../utils/utils.h"
 #include "userHelpers/userHelpers.h"
@@ -53,17 +55,41 @@ User::User(int id, vector<int>& idPosts, vector<unordered_set<string> >& allCoin
         this->sentiment.push_back(0);
     } // End for
 
+    int flag;
+
     /* Fix sentiment */
-    fixSentimentConstructor(this->sentiment, this->unknownCoins, this->idPosts, *this->allCoins, *this->coins, *this->lexicon, *this->allPosts, status);
+    flag = fixSentimentConstructor(this->sentiment, this->unknownCoins, this->idPosts, *this->allCoins, *this->coins, *this->lexicon, *this->allPosts, status);
     if(status != SUCCESS){
         this->id = -1;
         return;
     }
 
+    if(flag == 0)
+        this->invalid = 1; // Invalid user - no information
+    else{
+        this->invalid = 0;
+
+        /* Find avg value of sentiment */
+
+        int totalActiveCoins = 0;
+        this->avgSentiment = 0;
+
+        for(i = 0; i < this->sentiment.size(); i++){
+            if(this->unknownCoins[i] != 0){
+                this->avgSentiment += this->sentiment[i];
+                totalActiveCoins++;
+            }
+        } // End for - FInd avg sentiment
+
+        if(totalActiveCoins != 0)
+            this->avgSentiment /= (double)totalActiveCoins;
+
+    }
+}
 
 /* Recommend the best(p) coins in current user based on given neighbors */
-void User::recommend(int p, vector<User>& neighborUsers, vector<int>& newCoins, errorCode& status){
-    int i, totalUnknown = 0; // Total unknown coins
+void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins, errorCode& status){
+    int i, totalUnknown = 0, j; // Total unknown coins
     double similaritySum = 0, normalizingFactor = 0, currVal;
     vector<newCoinNode> coinsHeap; // Keep p best coins based on score
 
@@ -88,50 +114,92 @@ void User::recommend(int p, vector<User>& neighborUsers, vector<int>& newCoins, 
     /* Reset new coins */
     newCoins.clear();
 
-    /* Find similarity sum only once */
-    for(i = 0; i < neighborUsers.size(); i++){
-        similaritySum += similarityFunc(this->sentiment, neighborUsers[i].sentiment, status);
-        if(status != SUCCESS)
-            return;
-    } // End for
+    /* Check if user is invalid */
+    if(this->invalid == 1){
+        /* Set random engine */
+        unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+        default_random_engine generator(seed);
+        uniform_real_distribution<float> uniformDist(0, this->coins->size() - 1); // [0, coins-1]
 
-    if(similaritySum == 0){
-        status = DIV_OVERFLOW;
-        return;
+        /* Do not pick same coin twice */
+        unordered_set<int> visited;
+        unordered_set<int>::iterator iterVisited;
+        int currPos;
+
+        /* Exctract p random coins */
+        for(i = 0; i < p; i++){
+
+            currPos = uniformDist(generator);
+
+            /* Check visited */
+            iterVisited = visited.find(currPos);
+
+            if(iterVisited == visited.end()){
+                newCoins.push_back(currPos);
+                visited.insert(currPos);
+            }
+            else
+                i -= 1;
+        } // End for
     }
+    else{
 
-    /* Fix normalizing factor */
-    normalizingFactor = 1 / similaritySum;
+        /* For every unkown coin predict user's behavior */
+        for(i = 0; this->unknownCoins.size(); i++){
 
-    /* For every unkown coin predict user's behavior */
-    for(i = 0; this->unknownCoins.size(); i++){
+            /* Known coin */
+            if(this->unknownCoins[i] == 1)
+                continue;
+            else
+                totalUnknown++;
 
-        /* Known coin */
-        if(this->unknownCoins[i] == 1)
-            continue;
-        else
-            totalUnknown++;
+            /* Reset  */
+            similaritySum = 0;
 
-        currVal = normalizingFactor * similaritySum * this->sentiment[i];
+           /* Scan users */
+            for(j = 0; j < neighborUsers.size(); j++){
 
-        /* Add new coin in heap */
-        coinsHeap.push_back(newCoinNode(i, currVal));
-    } // End for - unknown coins
+                /* Discard invalid users */
+                if(neighborUsers[j]->invalid == 1)
+                    continue;
 
-    /* All coins are known */
-    if(totalUnknown == 0)
-        return;
+                currVal = similarityFunc(this->sentiment, neighborUsers[j]->sentiment, status);
+                if(status != SUCCESS)
+                    return;
 
-    /* Create heap */
-    make_heap(coinsHeap.begin(), coinsHeap.end(), newCoinNodeCompare());
+                currVal = currVal * (neighborUsers[j]->sentiment[i] - neighborUsers[j]->avgSentiment);
 
-    /* Fix p if unkown coins are less than p */
-    if(p > totalUnknown)
-        p = totalUnknown;
+                similaritySum += currVal;
+            } // End for scan users
 
-    /* Exctract best p coins */
-    for(i = 0; i < p; i++)
-        newCoins.push_back(coinsHeap.front().pos);
+            if(similaritySum == 0){
+                status = DIV_OVERFLOW;
+                return;
+            }
+
+            /* Fix normalizing factor */
+            normalizingFactor = 1 / similaritySum;
+            currVal = this->avgSentiment + (normalizingFactor * similaritySum);
+
+            /* Add new coin in heap */
+            coinsHeap.push_back(newCoinNode(i, currVal));
+        } // End for - unknown coins
+
+        /* All coins are known */
+        if(totalUnknown == 0)
+            return;
+
+        /* Create heap */
+        make_heap(coinsHeap.begin(), coinsHeap.end(), newCoinNodeCompare());
+
+        /* Fix p if unkown coins are less than p */
+        if(p > totalUnknown)
+            p = totalUnknown;
+
+        /* Exctract best p coins */
+        for(i = 0; i < p; i++)
+            newCoins.push_back(coinsHeap.front().pos);
+    }
 }
 
 ////////////////
