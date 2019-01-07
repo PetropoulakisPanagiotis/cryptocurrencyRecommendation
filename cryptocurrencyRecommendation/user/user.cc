@@ -287,4 +287,17 @@ int User::getSizeOfPosts(errorCode& status){
 
     return this->totalPosts;
 }
+
+/* Get status of user */
+int User::getStatus(errorCode& status){
+
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_USER;
+        return -1;
+    }
+
+    return this->invalid;
+}
 // PetropoulakisPanagiotis

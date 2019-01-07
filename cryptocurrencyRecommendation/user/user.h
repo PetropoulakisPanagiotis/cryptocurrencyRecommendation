@@ -36,5 +36,6 @@ class User{
         std::vector<int>* getUnknownCoins(errorCode& status);
         int getUnknownCoin(int index, errorCode& status);
         int getSizeOfPosts(errorCode& status);
+        int getStatus(errorCode& status);
 };
 // PetropoulakisPanagiotis
