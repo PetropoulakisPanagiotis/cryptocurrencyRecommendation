@@ -50,7 +50,7 @@ User::User(int id, vector<int>& idPosts, vector<unordered_set<string> >& allCoin
     /* Initialize sentiment and unknownCoins */
     vector<string>& coinsRef = *this->coins;
 
-    for(i = 0; i < coinsRef.size(); i++){
+    for(i = 0; i < (int)coinsRef.size(); i++){
         this->unknownCoins.push_back(0);
         this->sentiment.push_back(0);
     } // End for
@@ -74,7 +74,7 @@ User::User(int id, vector<int>& idPosts, vector<unordered_set<string> >& allCoin
         int totalActiveCoins = 0;
         this->avgSentiment = 0;
 
-        for(i = 0; i < this->sentiment.size(); i++){
+        for(i = 0; i < (int)this->sentiment.size(); i++){
             if(this->unknownCoins[i] != 0){
                 this->avgSentiment += this->sentiment[i];
                 totalActiveCoins++;
@@ -101,7 +101,7 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
     }
 
     /* Check parameters */
-    if(p <= 0 || p > this->coins->size()){
+    if(p <= 0 || p > (int)this->coins->size()){
         status = INVALID_P;
         return;
     }
@@ -157,7 +157,7 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
             similaritySum = 0;
 
            /* Scan users */
-            for(j = 0; j < neighborUsers.size(); j++){
+            for(j = 0; j < (int)neighborUsers.size(); j++){
 
                 /* Discard invalid users */
                 if(neighborUsers[j]->invalid == 1)
@@ -267,7 +267,7 @@ int User::getUnknownCoin(int index, errorCode& status){
         return -1;
     }
 
-    if(index < 0 || index >= this->unknownCoins.size()){
+    if(index < 0 || index >= (int)this->unknownCoins.size()){
         status = INVALID_INDEX;
         return -1;
     }

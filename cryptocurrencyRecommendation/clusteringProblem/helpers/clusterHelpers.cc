@@ -129,6 +129,112 @@ void cluster::fixCluster(errorCode& status, std::list<Item>& items, int numClust
         this->clustersItems.push_back(list<int>());
 }
 
+/* Helper function for constructor */
+/* Check for errors and initialize */
+/* some members                    */
+void cluster::fixCluster(errorCode& status, std::vector<Item>& items, int numClusters, std::string initAlgo, std::string assignAlgo, std::string updateAlgo, std::string metrice, int maxIter, double tol){
+
+    status = SUCCESS;
+
+    /* Check parameters */
+    if(numClusters < MIN_CLUSTERS || numClusters > MAX_CLUSTERS){
+        status = INVALID_CLUSTERS;
+        return;
+    }
+
+    if(tol < MIN_TOL || tol > MAX_TOL){
+        status = INVALID_TOL;
+        return;
+    }
+
+    if((items.size() / numClusters) > 2){
+        status = INVALID_CLUSTERS;
+        return; 
+    }
+
+    if(initAlgo != "random" && initAlgo != "k-means++"){
+        status = INVALID_ALGO;
+        return;
+    }
+
+    if(assignAlgo != "lloyd" && assignAlgo != "range-lsh" && assignAlgo != "range-hypercube"){
+        status = INVALID_ALGO;
+        return;
+    }
+
+    if(updateAlgo != "k-means" && updateAlgo != "pam-lloyd"){
+        status = INVALID_ALGO;
+        return;
+    }
+
+    if(metrice != "euclidean" && metrice != "cosine"){
+        status = INVALID_METRICE;
+        return;
+    }
+
+    if(maxIter < MIN_ITER || maxIter > MAX_ITER){
+        status = INVALID_ITER;
+        return;
+    }
+
+    /////////////////
+    /* Set members */
+    /////////////////
+
+    int i;
+
+    this->currStateVal = -1;
+
+    /* Set distance function */
+    if(metrice == "euclidean")
+        this->distFunc = &euclideanDistance;
+    else
+        this->distFunc = &cosineDistance;
+
+    /* Set objective function */
+    if(updateAlgo == "k-means")
+        this->objFunc = &getNextObjective1;
+    else
+        this->objFunc = &getNextObjective2;
+
+    /* Check dim */
+    this->dim = items[0].getDim();
+    if(this->dim <= 0 || this->dim > MAX_DIM){
+        status = INVALID_DIM;
+        return;
+    }
+
+    /* Set number of items */
+    this->n = items.size();
+    if(this->n < MIN_POINTS || this->n > MAX_POINTS){
+        status = INVALID_POINTS;
+        return;
+    }
+
+    /* Fix vectors */
+    this->items.reserve(this->n);
+    this->itemsClusters.reserve(this->n);
+    this->clusters.reserve(this->numClusters);
+
+    /* Copy items */
+    for(i = 0; i < (int)items.size(); i++){
+
+        /* Check consistency of dim */
+        if(this->dim != items[i].getDim()){
+            status = INVALID_POINTS;
+            return;
+        }
+
+        /* Add item */
+        this->items.push_back(items[i]);
+        this->itemsClusters.push_back(-1);
+    } // End for
+
+    /* Initialize clustersItems vector */
+    for(i = 0; i < this->numClusters; i++)
+        this->clustersItems.push_back(list<int>());
+}
+
 
 /* Perform upper bound algorithm like stl's algorithms. Return index of given value */
 /* Given vector must be sorted                                                      */

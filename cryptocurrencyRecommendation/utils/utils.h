@@ -16,7 +16,7 @@
 #define MAX_POINTS 2000000 // Max points that models can handle
 #define MIN_POINTS 40
 #define MAX_RADIUS 5000000
-#define MIN_RADIUS 0
+#define MIN_RADIUS -1
 #define MY_MAX_RANDOM 5
 #define MY_MIN_RANDOM -5
 #define MAX_ITER 1500 // Max iterations for clustering methods
@@ -29,6 +29,7 @@
 #define MIN_COEF_RADIUS 0.001
 #define MAX_ID_POSTS 10000 // Max posts per user
 #define MAX_POSTS 50000000 // Max posts for recommendation
+#define MIN_P 1
 
 /* Errors */
 typedef enum errorCode{

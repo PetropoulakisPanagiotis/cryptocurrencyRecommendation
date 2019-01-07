@@ -309,7 +309,7 @@ void lshEuclidean::radiusNeighbors(Item& query, int radius, list<Item>& neighbor
 
         /* Scan list of specific bucket */
         for(iter = this->tables[i][pos].begin(); iter != this->tables[i][pos].end(); iter++){  
-            
+
             currId = iter->point->getId();
 
             /* Compare values g of query and current point */
@@ -320,9 +320,9 @@ void lshEuclidean::radiusNeighbors(Item& query, int radius, list<Item>& neighbor
             currDist = iter->point->euclideanDist(query, status);
             if(status != SUCCESS)
                 return;
-           
+
             /* Keep neighbor */
-            if(currDist < radius){
+            if(radius == -1 || currDist < radius){
                 /* Not found - add it */
                 if(visited.find(currId) == visited.end()){
                     visited.insert(currId);
@@ -408,7 +408,7 @@ void lshEuclidean::radiusNeighbors(Item& query, int radius, list<int>& neighbors
                 return;
            
             /* Keep neighbor */
-            if(currDist < radius){
+            if(radius == -1 || currDist < radius){
                 /* Not found - add it */
                 if(visited.find(currId) == visited.end()){
                     visited.insert(currId);

@@ -334,7 +334,7 @@ void printError(errorCode& status){
             break;
 
         case(INVALID_P):
-            cout << "Please give valid value of p\n";
+            cout << "Please give an apropriate p (more than" + to_string(MIN_P) + ")\n";
             break;
     } // End switch
 }

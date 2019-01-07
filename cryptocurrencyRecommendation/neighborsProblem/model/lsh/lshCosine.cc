@@ -281,7 +281,7 @@ void lshCosine::radiusNeighbors(Item& query, int radius, list<Item>& neighbors, 
                 return;
             
             /* Keep neighbor */
-            if(currDist < radius){
+            if(radius == -1 || currDist < radius){
                 /* Not found - add it */
                 if(visited.find(currId) == visited.end()){
                     visited.insert(currId);
@@ -354,7 +354,7 @@ void lshCosine::radiusNeighbors(Item& query, int radius, list<int>& neighborsInd
                 return;
             
             /* Keep neighbor */
-            if(currDist < radius){
+            if(radius == -1 || currDist < radius){
                 /* Not found - add it */
                 if(visited.find(currId) == visited.end()){
                     visited.insert(currId);

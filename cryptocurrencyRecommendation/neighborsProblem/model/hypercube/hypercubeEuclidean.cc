@@ -242,7 +242,7 @@ void hypercubeEuclidean::radiusNeighbors(Item& query, int radius, list<Item>& ne
                 return;
             
             /* Keep neighbor */
-            if(currDist < radius){
+            if(radius == -1 || currDist < radius){
                 neighbors.push_back(iter->point);
                 if(neighborsDistances != NULL)
                     neighborsDistances->push_back(currDist);
@@ -334,7 +334,7 @@ void hypercubeEuclidean::radiusNeighbors(Item& query, int radius, list<int>& nei
                 return;
             
             /* Keep neighbor */
-            if(currDist < radius){
+            if(radius == -1 || currDist < radius){
                 neighborsIndexes.push_back(iter->pos);
                 if(neighborsDistances != NULL)
                     neighborsDistances->push_back(currDist);

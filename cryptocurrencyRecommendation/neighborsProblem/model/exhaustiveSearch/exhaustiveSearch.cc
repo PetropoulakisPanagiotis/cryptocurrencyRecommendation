@@ -102,7 +102,7 @@ void exhaustiveSearch::radiusNeighbors(Item& query, int radius, list<Item>& neig
             return;
 
         /* Keep neighbor */
-        if(currDist < radius){
+        if(radius == -1 || currDist < radius){
             neighbors.push_back(this->points[i]);
             if(neighborsDistances != NULL)
                 neighborsDistances->push_back(currDist);
@@ -147,7 +147,7 @@ void exhaustiveSearch::radiusNeighbors(Item& query, int radius, list<int>& neigh
             return;
 
         /* Keep neighbor */
-        if(currDist < radius){
+        if(radius == -1 || currDist < radius){
             neighborsIndexes.push_back(i);
             if(neighborsDistances != NULL)
                 neighborsDistances->push_back(currDist);

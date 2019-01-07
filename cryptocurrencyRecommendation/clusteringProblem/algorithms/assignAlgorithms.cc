@@ -15,7 +15,7 @@ using namespace std;
 /* Terminate: 1                                                                    */
 /* Failure: -1                                                                     */
 int cluster::lloydAssign(errorCode& status){
-    double newObjVal = 0, tmpObjVal = 0;
+    double newObjVal = 0;
     int itemPos = 0, clusterPos = 0; // Indexes
     double minDist = 0, currDist = 0 ; // Distances
     int minClusterPos = 0; // Index of minimum cluster

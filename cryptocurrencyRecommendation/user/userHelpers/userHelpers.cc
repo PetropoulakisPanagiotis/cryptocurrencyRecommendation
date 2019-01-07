@@ -49,7 +49,7 @@ void setIdPostsConstructor(vector<int>& xIdPosts, vector<int>& yIdPosts, errorCo
     status = SUCCESS;
 
     /* Scan y id posts */
-    for(i = 0; i < yIdPosts.size(); i++){
+    for(i = 0; i < (int)yIdPosts.size(); i++){
         if(yIdPosts[i] < 0){
             status = INVALID_ID_POSTS;
             return;
@@ -72,7 +72,7 @@ int sentimentNormalization(vector<double>& sentiment, double alpha=15){
         alpha = 15;
 
     /* Scale every individual sentiment */
-    for(i = 0; i < sentiment.size(); i++){
+    for(i = 0; i < (int)sentiment.size(); i++){
         if(sentiment[i] == 0)
             continue;
 
@@ -145,7 +145,7 @@ void fixSentiment(vector<double>& sentiment, vector<int>& unknownCoins, vector<u
     } // End for - Scann tokens
 
     /* Add score in the corresponding coin(s) */
-    for(i = 0; i < coinsOfPost.size(); i++)
+    for(i = 0; i < (int)coinsOfPost.size(); i++)
         sentiment[coinsOfPost[i]] += scorePost;
 }
 
@@ -157,7 +157,7 @@ int fixSentimentConstructor(vector<double>& sentiment, vector<int>& unknownCoins
     status = SUCCESS;
 
     /* Scan all posts of the user */
-    for(i = 0; i < idPosts.size(); i++){
+    for(i = 0; i < (int)idPosts.size(); i++){
 
         /* Find sentiment from current post and fix the overall sentiment */
         fixSentiment(sentiment, unknownCoins, allCoins, coins, lexicon, idPosts[i], allPosts, status);
@@ -185,7 +185,7 @@ double norm(vector<double>& x, errorCode& status){
     }
 
     /* Calculate norm */
-    for(i = 0; i < x.size(); i++){
+    for(i = 0; i < (int)x.size(); i++){
         tempMult = x[i] * x[i];
 
         norm += tempMult;
@@ -215,7 +215,7 @@ double innerProduct(vector<double>& x, vector<double>& y, errorCode& status){
     }
 
     /* Calculate product */
-    for(i = 0; i < x.size(); i++){
+    for(i = 0; i < (int)x.size(); i++){
         tempMult = x[i] * y[i];
 
         product += tempMult;

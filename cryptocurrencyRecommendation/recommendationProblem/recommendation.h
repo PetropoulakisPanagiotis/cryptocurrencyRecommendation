@@ -16,9 +16,9 @@ class recommendation{
         std::vector<User> users;
         std::vector<User> pseudoUsers; // Occured from clustering
         int postsSize, usersSize, pseudoUsersSize;
-        std::vector<std::unordered_set<std::string> > allCoins;
-        std::vector<std::string> coins; // Unique names of coins
-        std::unordered_map<std::string, double> lexicon; // Map: token -> score
+        std::vector<std::unordered_set<std::string> >* allCoins;
+        std::vector<std::string>* coins; // Unique names of coins
+        std::unordered_map<std::string, double>* lexicon; // Map: token -> score
         int coinsSize;
         cluster* clusterVectorPosts;
         std::vector<std::vector<int> > predictedLshUsers; // Predicted coins for user via lsh - A

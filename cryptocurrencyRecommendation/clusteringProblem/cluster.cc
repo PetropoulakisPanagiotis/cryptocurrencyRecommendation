@@ -156,6 +156,23 @@ cluster::cluster(errorCode& status, list<Item>& items, int k, int numClusters, s
     this->fitted = 0;
 }
 
+/* Init cluster: Check for errors, set items and other members */
+/* Range model: default constructor  - vector                  */
+cluster::cluster(errorCode& status, vector<Item>& items, int numClusters, string initAlgo, string assignAlgo, string updateAlgo, string metrice, int maxIter, double tol):numClusters(numClusters), maxIter(maxIter), tol(tol), initAlgo(initAlgo), assignAlgo(assignAlgo), updateAlgo(updateAlgo), metrice(metrice){
+
+    status = SUCCESS;
+
+    this->fitted = -1;
+
+    /* Check parameters and initialize members items + clusters */
+    fixCluster(status, items, numClusters, initAlgo, assignAlgo, updateAlgo, metrice, maxIter, tol);
+    if(status != SUCCESS)
+       return;
+
+    /* Success */
+    this->fitted = 0;
+}
+
 /* Destructor: delete range model */
 cluster::~cluster(){
     if(this->rangeModel)
@@ -254,6 +271,91 @@ void cluster::fit(vector<Item>& clusters, vector<int>& clustersSize, errorCode& 
         clusters.push_back(this->clusters[clusterPos]);
         clustersSize.push_back(this->clustersItems[clusterPos].size());
     }
+
+    /* Success */
+    this->fitted = 1;
+}
+
+/* Perform clustering             */
+void cluster::fit(errorCode& status){
+    int step, terminate;
+    int itemPos; // Indexes
+    double radius; // For range search
+
+    status = SUCCESS;
+
+    /* Check model */
+    if(this->fitted == -1){
+        status = INVALID_METHOD;
+        return;
+    }
+
+    if(this->fitted == 1){
+        status = METHOD_ALREADY_USED;
+        return;
+    }
+
+    ///////////////////////////
+    /* Select init algorithm */
+    ///////////////////////////
+
+    if(initAlgo == "random")
+        this->randomInit();
+    else if(initAlgo == "k-means++")
+        this->kmeansPlusInit(status);
+
+    /* Error occured */
+    if(status != SUCCESS)
+        return;
+
+    ////////////////////////////////////////
+    /* Initialize radius for range search */
+    ////////////////////////////////////////
+    if(assignAlgo != "lloyd"){
+        initRadius(radius, status);
+        if(status != SUCCESS)
+            return;
+    }
+
+    /* Perform clustering                             */
+    /* Max iter: Is the strongest terminate condition */
+    for(step = 0; step < this->maxIter; step++){
+
+        /////////////////////////////////
+        /* Select assignment algorithm */
+        /////////////////////////////////
+
+        if(this->assignAlgo == "lloyd")
+            terminate = this->lloydAssign(status);
+        else
+            terminate = this->rangeAssign(radius, status);
+
+        /* Error occured */
+        if(status != SUCCESS)
+            return;
+
+        /* Clusters have been determined */
+        if(terminate == 1)
+           break;
+
+        /////////////////////////////
+        /* Select update algorithm */
+        /////////////////////////////
+
+        if(this->updateAlgo == "k-means")
+            this->kmeans(status);
+        else if(this->updateAlgo == "pam-lloyd")
+            this->pamLloyd(status);
+
+        /* Error occured */
+        if(status != SUCCESS)
+            return;
+    } // End for - perform clustering
+
+    /* Map clusters with items for fast calculations(silhouette etc.) */
+    for(itemPos = 0; itemPos < this->n; itemPos++){
+        this->clustersItems[this->itemsClusters[itemPos]].push_back(itemPos);
+    } // End for items
 
     /* Success */
     this->fitted = 1;
@@ -437,5 +539,30 @@ string cluster::getId(errorCode& status){
         id += to_string(2);
 
     return id;
+}
+
+/* Get clusters items */
+void cluster::getClustersItems(vector<vector<int> >& clustersItems, errorCode& status){
+
+    status = SUCCESS;
+
+    /* Check model */
+    if(this->fitted == -1){
+        status = INVALID_METHOD;
+        return;
+    }
+
+    /* Reset parameter */
+    clustersItems.clear();
+
+    /* Set parameters */
+    list<int>::iterator iterInt;
+    int i;
+
+    /* Copy clusters items  */
+    for(i = 0; i < this->numClusters; i++){
+        for(iterInt = this->clustersItems[i].begin(); iterInt != this->clustersItems[i].end(); iterInt++)
+            clustersItems[i].push_back(*iterInt);
+    } // End for - fix clusters
 }
 // Petropoulakis Panagiotis
