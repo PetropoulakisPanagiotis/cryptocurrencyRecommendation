@@ -27,26 +27,27 @@ class lshEuclidean: public model{
         int dim; // Dimension
         int w; // Window size
         int fitted; // Method is fitted with data
-    
+
     public:
 
         lshEuclidean();
         lshEuclidean(int k, int l, errorCode& status);
         lshEuclidean(int l, int k, int w, float coefficient, errorCode& status);
-        
+
         ~lshEuclidean();
 
         void fit(std::list<Item>& points, errorCode& status);
 
         void radiusNeighbors(Item& query, int radius, std::list<Item>& neighbors, std::list<double>* neighborsDistances, errorCode& status);
         void radiusNeighbors(Item& query, int radius, std::list<int>& neighborsIndexes, std::list<double>* neighborsDistances, errorCode& status);
+        void simpleNeighbors(Item& query, std::list<std::string>& neighborsIds, int p, errorCode& status) ;
 
         void nNeighbor(Item& query, Item& nNeighbor, double* neighborDistance, errorCode& status);
-        
+
         int getNumberOfPoints(errorCode& status);
         int getDim(errorCode& status);
         unsigned size(void);
-        
+
         void print(void);
         void printHashFunctions(void);
 };

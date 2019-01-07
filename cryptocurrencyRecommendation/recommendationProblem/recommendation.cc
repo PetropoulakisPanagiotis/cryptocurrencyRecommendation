@@ -9,6 +9,8 @@
 #include "../item/item.h"
 #include "../user/user.h"
 #include "../clusteringProblem/cluster.h"
+#include "../neighborsProblem/model/model.h"
+#include "../neighborsProblem/model/lsh/lsh.h"
 #include "helpers/recommendationHelpers.h"
 #include "recommendation.h"
 
@@ -101,6 +103,74 @@ recommendation::recommendation(vector<ItemToken>& tokenPosts, vector<Item>& vect
     this->fittedB = 0;
 }
 
+/* Recommend coins for users using lsh method */
+/* Recommend coins based on neighbors users   */
+/* and based on pseudo neighbors users        */
+void recommendation::fitLsh(vector<vector<int> >& predictedLshUsers, vector<vector<int> >& predictedLshPseudoUsers, errorCode& status, int coinsUsersReturn, int coinsPseudoUsersReturn){
+    int i, valid;
 
+    status = SUCCESS;
+
+    if(this->fittedA == -1 || this->fittedB == -1){
+        status = INVALID_METHOD;
+        return;
+    }
+
+    /* Already fitted return calculated predicted coins      */
+    /* Note use another method if you whant to use different */
+    /* default values(coinsUsersReturn etc.)                 */
+    if(this->fittedA == 1){
+        predictedLshUsers = this->predictedLshUsers;
+        predictedLshPseudoUsers = this->predictedLshPseudoUsers;
+        return;
+    }
+
+    ///////////////////////////////////
+    /* Predict coins using lsh users */
+    ///////////////////////////////////
+
+    /* Every user is represented with it's sentiment */
+    list<Item> sentimentUsers;
+    string currId;
+
+    /* Fix sentiment */
+    for(i = 0; i < this->usersSize; i++){
+
+        /* Discard invalid users */
+        valid = this->users[i].getStatus(status);
+        if(status != SUCCESS)
+            return;
+
+        if(valid == 0)
+            continue;
+
+        /* Get sentiment */
+        vector<double>* sentimentUser;
+
+        sentimentUser = this->users[i].getSentiment(status);
+        if(status != SUCCESS)
+            return;
+
+        currId = to_string(i);
+
+        /* Fix sentiment list */
+        sentimentUsers.push_back(Item(currId, *sentimentUser, status));
+        if(status != SUCCESS)
+            return;
+    } // End for
+
+    /* Pick model */
+    model* lshUsersModel;
+
+    /* Create model */
+    lshUsersModel = new lshEuclidean();
+
+    /* Fit model */
+    lshUsersModel->fit(sentimentUsers, status);
+    if(status != SUCCESS)
+            return;
+
+
+}
 
 // PetropoulakisPanagiotis
