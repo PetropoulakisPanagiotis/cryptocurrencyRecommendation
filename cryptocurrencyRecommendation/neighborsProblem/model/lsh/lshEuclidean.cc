@@ -4,6 +4,7 @@
 #include <cmath>
 #include <unordered_set>
 #include <new>
+#include <algorithm>
 #include "lsh.h"
 #include "../../hashFunction/hashFunction.h"
 #include "../../../item/item.h"
@@ -434,7 +435,6 @@ void lshEuclidean::simpleNeighbors(Item& query, list<string>& neighborsIds, int 
     list<entry>::iterator iter;
     unordered_set<string> visited; // Visited points
     string currId;
-    int totalNeighbors = 0; // Neighbors found
     vector<neighborNode> neighbors;
 
     status = SUCCESS;
@@ -511,9 +511,9 @@ void lshEuclidean::simpleNeighbors(Item& query, list<string>& neighborsIds, int 
 
     /* Check if Neighbors are less than p */
     /* Copy all items                     */
-    if(neighbors.size() < p){
+    if((int)neighbors.size() < p){
 
-        for(i = 0; i < this->points.size(); i++){
+        for(i = 0; i < (int)this->points.size(); i++){
 
             currId = this->points[i].getId();
             if(currId == query.getId())
@@ -539,7 +539,7 @@ void lshEuclidean::simpleNeighbors(Item& query, list<string>& neighborsIds, int 
     sort(neighbors.begin(), neighbors.end(), neighborsCompare());
 
     /* Fix given list */
-    for(i = 0; i < neighbors.size(); i++){
+    for(i = 0; i < (int)neighbors.size(); i++){
 
         /* P neighbors copied */
         if(i == p)

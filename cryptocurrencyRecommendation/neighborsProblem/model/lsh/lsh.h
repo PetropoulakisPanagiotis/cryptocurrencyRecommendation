@@ -22,14 +22,17 @@ class lshEuclidean: public model{
             std::string pos;
             double dist;
 
-            neighborNode(int pos, double dist):pos(pos),dist(dist){}
+            neighborNode(std::string pos, double dist){
+                this->pos = pos;
+                this->dist = dist;
+            }
         }neighborNode;
 
         struct neighborsCompare{
             bool operator()(const neighborNode& x, const neighborNode& y) const{
                 return x.dist < y.dist;
             }
-        }
+        };
 
         std::vector<Item> points; // Keep points
         std::vector<std::vector<std::list<entry> > > tables; // Each table is a hash table(vector of lists)
