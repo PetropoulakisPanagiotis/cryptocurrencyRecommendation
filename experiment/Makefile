@@ -2,8 +2,8 @@
 CC = g++
 FLAGS = -g -Wall
 
-exmperiment: experiment.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o
-	$(CC) -o experiment $(FLAGS) experiment.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o -std=c++11
+exmperiment: experiment.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o recommendationAlgorithms.o
+	$(CC) -o experiment $(FLAGS) experiment.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o recommendationAlgorithms.o -std=c++11
 
 experiment.o: experiment.cc
 	$(CC) -c  $(FLAGS) experiment.cc -std=c++11
@@ -61,6 +61,9 @@ recommendation.o: ../cryptocurrencyRecommendation/recommendationProblem/recommen
 
 recommendationHelpers.o: ../cryptocurrencyRecommendation/recommendationProblem/helpers/recommendationHelpers.cc
 	$(CC) -c $(FLAGS) ../cryptocurrencyRecommendation/recommendationProblem/helpers/recommendationHelpers.cc -std=c++11
+
+recommendationAlgorithms.o: ../cryptocurrencyRecommendation/recommendationProblem/recommendationAlgorithms.cc
+	$(CC) -c $(FLAGS) ../cryptocurrencyRecommendation/recommendationProblem/recommendationAlgorithms.cc -std=c++11
 
 .PHONY:
 	clean

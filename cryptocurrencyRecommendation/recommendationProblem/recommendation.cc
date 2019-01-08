@@ -107,7 +107,6 @@ recommendation::recommendation(vector<ItemToken>& tokenPosts, vector<Item>& vect
 /* Recommend coins based on neighbors users   */
 /* and based on pseudo neighbors users        */
 void recommendation::fitLsh(vector<vector<int> >& predictedLshUsers, vector<vector<int> >& predictedLshPseudoUsers, errorCode& status, int coinsUsersReturn, int coinsPseudoUsersReturn){
-    int i, valid;
 
     status = SUCCESS;
 
@@ -125,51 +124,21 @@ void recommendation::fitLsh(vector<vector<int> >& predictedLshUsers, vector<vect
         return;
     }
 
-    ///////////////////////////////////
-    /* Predict coins using lsh users */
-    ///////////////////////////////////
-
-    /* Every user is represented with it's sentiment */
-    list<Item> sentimentUsers;
-    string currId;
-
-    /* Fix sentiment */
-    for(i = 0; i < this->usersSize; i++){
-
-        /* Discard invalid users */
-        valid = this->users[i].getStatus(status);
-        if(status != SUCCESS)
-            return;
-
-        if(valid == 0)
-            continue;
-
-        /* Get sentiment */
-        vector<double>* sentimentUser;
-
-        sentimentUser = this->users[i].getSentiment(status);
-        if(status != SUCCESS)
-            return;
-
-        currId = to_string(i);
-
-        /* Fix sentiment list */
-        sentimentUsers.push_back(Item(currId, *sentimentUser, status));
-        if(status != SUCCESS)
-            return;
-    } // End for
-
-    /* Pick model */
-    model* lshUsersModel;
-
-    /* Create model */
-    lshUsersModel = new lshEuclidean();
-
-    /* Fit model */
-    lshUsersModel->fit(sentimentUsers, status);
+    ////////////////////////////////////////////////////
+    /* Find neighbor users with lsh and predict coins */
+    ////////////////////////////////////////////////////
+    this->recommendationLshUsers(coinsUsersReturn, status);
     if(status != SUCCESS)
-            return;
+        return;
 
+    ///////////////////////////////////////////////////////////
+    /* Find neighbor pseudo users with lsh and predict coins */
+    ///////////////////////////////////////////////////////////
+    this->recommendationLshPseudoUsers(coinsPseudoUsersReturn, status);
+    if(status != SUCCESS)
+        return;
+
+    /* Return results */
 
 }
 

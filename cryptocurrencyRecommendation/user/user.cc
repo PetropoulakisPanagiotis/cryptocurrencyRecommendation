@@ -106,11 +106,6 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
         return;
     }
 
-    if(neighborUsers.size() == 0){
-        status = INVALID_USER_NEIGHBORS;
-        return;
-    }
-
     /* Reset new coins */
     newCoins.clear();
 
@@ -143,6 +138,11 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
         } // End for
     }
     else{
+
+        if(neighborUsers.size() == 0){
+            status = INVALID_USER_NEIGHBORS;
+            return;
+        }
 
         /* For every unkown coin predict user's behavior */
         for(i = 0; this->unknownCoins.size(); i++){

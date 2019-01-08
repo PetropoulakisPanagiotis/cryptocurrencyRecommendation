@@ -28,6 +28,12 @@ class recommendation{
         int fittedA, fittedB; // Predicted vectors have been calculated
         int p; // Number of neighbors to be examined
 
+        /* Recommendation algorithms */
+        void recommendationLshUsers(int coinsReturned, errorCode& status);
+        void recommendationLshPseudoUsers(int coinsReturned, errorCode& status);
+        void recommendationClusteringUsers(int coinsReturned, errorCode& status);
+        void recommendationClusteringPseudoUsers(int coinsReturned, errorCode& status);
+
     public:
         recommendation(std::vector<ItemToken>& tokenPosts, std::vector<Item>& vectorPosts, std::vector<User>& users, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, errorCode& status, int p=20,int k=120);
         ~recommendation();
