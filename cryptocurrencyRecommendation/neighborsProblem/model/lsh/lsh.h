@@ -16,6 +16,21 @@ class lshEuclidean: public model{
             int pos; // Position of point
         }entry;
 
+        /* Node to keep neighbors of item and it's distance */
+        /* Use it for simple search                         */
+        typedef struct neighborNode{
+            std::string pos;
+            double dist;
+
+            neighborNode(int pos, double dist):pos(pos),dist(dist){}
+        }neighborNode;
+
+        struct neighborsCompare{
+            bool operator()(const neighborNode& x, const neighborNode& y) const{
+                return x.dist < y.dist;
+            }
+        }
+
         std::vector<Item> points; // Keep points
         std::vector<std::vector<std::list<entry> > > tables; // Each table is a hash table(vector of lists)
         std::vector<hashFunction*> hashFunctions; // Each table has one hash function

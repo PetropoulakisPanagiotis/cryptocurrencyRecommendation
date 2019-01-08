@@ -434,6 +434,8 @@ void lshEuclidean::simpleNeighbors(Item& query, list<string>& neighborsIds, int 
     list<entry>::iterator iter;
     unordered_set<string> visited; // Visited points
     string currId;
+    int totalNeighbors = 0; // Neighbors found
+    vector<neighborNode> neighbors;
 
     status = SUCCESS;
 
@@ -454,10 +456,8 @@ void lshEuclidean::simpleNeighbors(Item& query, list<string>& neighborsIds, int 
         return;
     }
 
-    /* Clear given lists */
-    neighborsIndexes.clear();
-    if(neighborsDistances != NULL)
-        neighborsDistances->clear();
+    /* Clear given list */
+    neighborsIds.clear();
 
     /* Scan all tables */
     for(i = 0; i < this->l; i++){
@@ -475,7 +475,7 @@ void lshEuclidean::simpleNeighbors(Item& query, list<string>& neighborsIds, int 
         vector<int> valueG;
         for(j = 0; j < this->k; j++){
             valueG.push_back(this->hashFunctions[i]->hashSubFunction(query, j, status));
-            if(status != SUCCESS){        
+            if(status != SUCCESS){
                 this->k = -1;
                 break;
             }
@@ -483,35 +483,70 @@ void lshEuclidean::simpleNeighbors(Item& query, list<string>& neighborsIds, int 
 
         /* Scan list of specific bucket */
         for(iter = this->tables[i][pos].begin(); iter != this->tables[i][pos].end(); iter++){  
-            
+
             currId = iter->point->getId();
+            if(currId == query.getId())
+                continue;
 
             /* Compare values g of query and current point */
             if(!equal(valueG.begin(), valueG.end(), iter->valueG.begin()))
+                continue;
+
+            /* Not found - add it */
+            if(visited.find(currId) == visited.end()){
+                visited.insert(currId);
+            }
+            else
                 continue;
 
             /* Find current distance */
             currDist = iter->point->euclideanDist(query, status);
             if(status != SUCCESS)
                 return;
-           
-            /* Keep neighbor */
-            if(radius == -1 || currDist < radius){
-                /* Not found - add it */
-                if(visited.find(currId) == visited.end()){
-                    visited.insert(currId);
-                }
-                /* Vidited - Discard it */
-                else
-                    continue;
-                
-                neighborsIndexes.push_back(iter->pos);
-                if(neighborsDistances != NULL)
-                    neighborsDistances->push_back(currDist);
-            }
+
+
+            neighbors.push_back(neighborNode(currId, currDist));
         } // End for - Scan list
     } // End for - Tables
 
+    /* Check if Neighbors are less than p */
+    /* Copy all items                     */
+    if(neighbors.size() < p){
+
+        for(i = 0; i < this->points.size(); i++){
+
+            currId = this->points[i].getId();
+            if(currId == query.getId())
+                continue;
+
+            /* Not found - add it */
+            if(visited.find(currId) == visited.end()){
+                visited.insert(currId);
+            }
+            else
+                continue;
+
+            /* Find current distance */
+            currDist = iter->point->euclideanDist(query, status);
+            if(status != SUCCESS)
+                return;
+
+            neighbors.push_back(neighborNode(currId, currDist));
+        } // End for scan all poins
+    }
+
+    /* Sort neighbors */
+    sort(neighbors.begin(), neighbors.end(), neighborsCompare());
+
+    /* Fix given list */
+    for(i = 0; i < neighbors.size(); i++){
+
+        /* P neighbors copied */
+        if(i == p)
+            return;
+
+        neighborsIds.push_back(neighbors[i].pos);
+    } // End for - fix list
 }
 
 /* Find the nearest neighbor of a given point */
