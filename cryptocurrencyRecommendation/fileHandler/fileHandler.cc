@@ -6,6 +6,7 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_map>
 #include <algorithm>
 #include "../item/item.h"
 #include "../utils/utils.h"
@@ -16,14 +17,13 @@ using namespace std;
 /* Read given file and extract points */
 /* WithId == 0, points have not id's  */
 /* WithId == 1, points have id's      */
-void readDataSet(string fileName, int withId, char delim, list<Item>& points, errorCode& status){
+void readVectorPostsSet(string fileName, int withId, char delim, list<Item>& points, errorCode& status){
     ifstream file; 
     string line, word; // Line is splitted in words
     int i, wordsSize, specialChar;
     double currComponent;
     
     /* Structures */
-    vector<string> metrices {"euclidean" , "cosine"}; // Available metrices
     set<string> ids; // Keep all ids - Check if all ids are unique
     set<string>::iterator iterSet; // Iterate through ids
     string::iterator iterStr; // Iteratre through word
@@ -169,14 +169,13 @@ void readDataSet(string fileName, int withId, char delim, list<Item>& points, er
     file.close();
 }
 
-/* Read config file         */
-/* It contains 1 or 3 lines */
-void readConf(string fileName, int& numClusters, int& k, int& l, errorCode& status){
+/* Read lexicon with scores. Return map */
+void readLexiconSet(string fileName, char delim, unordered_map<string, double>& lexicon, errorCode& status){
     ifstream file;
     string line, word; // Line is splitted in words
-    int step = 0;
+    int i, wordsSize, specialChar;
+    double currComponent;
 
-    /* Note: words in file == points/id/metrices */
     status = SUCCESS;
 
     /* Check parameters */
@@ -185,24 +184,20 @@ void readConf(string fileName, int& numClusters, int& k, int& l, errorCode& stat
         return;
     }
 
+    /* Clear lexicon */
+    lexicon.clear();
+
     file.open(fileName);
 
     /* Check if file opened properly */
     if(!file){
-        status = INVALID_CONF;
+        status = INVALID_LEXICON;
         return;
     }
 
-    /* Default values */
-    k = 4;
-    l = 5;
 
     /* Read lines in file */
     while(getline(file, line)){
-
-        if(step == 3)
-            break;
-
         /* Discard empty lines */
         if(line.length() == 0)
             continue;
@@ -211,64 +206,40 @@ void readConf(string fileName, int& numClusters, int& k, int& l, errorCode& stat
         std::istringstream wordStream(line);
         vector<string> words;
 
-        /* Get words */
-        while(getline(wordStream, word, ' '))
+        /* Get tokens + score */
+        while(getline(wordStream, word, delim))
             words.push_back(word);
 
-        if(words.size() != 2){
-            status = INVALID_CONF;
-            file.close();
+
+        string currWordKey, currWordScore; // Change form of word
+        double currScore;
+        wordsSize = words.size();
+
+        if(wordsSize != 2){
+            lexicon.clear();
+            status = INVALID_LEXICON;
             return;
         }
 
-        if(step == 0){
-            if(words[0] != "number_of_clusters:"){
-                status = INVALID_CONF;
-                file.close();
-                return;
-            }
-            try{
-                numClusters = stoi(words[1]) ; 
-            }
-            catch(...){
-                status = INVALID_CONF;
-                file.close();
-                return;
-            }
+        /* Read words */
+        currWordKey = words[0];
+        currWordScore = words[1];
+
+        /* Convert string to double */
+        try{
+            currScore= stod(currWordScore);
         }
-        if(step == 1){
-            if(words[0] != "number_of_hash_functions:"){
-                status = INVALID_CONF;
-                file.close();
-                return;
-            }
-            try{
-                k = stoi(words[1]) ; 
-            }
-            catch(...){
-                status = INVALID_CONF;
-                file.close();
-                return;
-            }
+        catch(...){
+            status = INVALID_LEXICON;
+            lexicon.clear();
+            return;
         }
-        if(step == 2){
-            if(words[0] != "number_of_hash_tables:"){
-                status = INVALID_CONF;
-                file.close();
-                return;
-            }
-            try{
-                l = stoi(words[1]) ; 
-            }
-            catch(...){
-                status = INVALID_CONF;
-                file.close();
-                return;
-            }
-        }
-        step++;
-    } // End while
+
+        /* Fix map */
+        lexicon.insert(make_pair(currWordKey, currScore));
+    } // End while - Read line
 
     file.close();
 }
+
 // Petropoulakis Panagiotis

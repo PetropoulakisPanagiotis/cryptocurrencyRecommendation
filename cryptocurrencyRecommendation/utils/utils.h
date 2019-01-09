@@ -68,7 +68,7 @@ typedef enum errorCode{
     INVALID_USER_ID,
     INVALID_USER,
     INVALID_USER_NEIGHBORS,
-    INVALID_P
+    INVALID_P,
 }errorCode;
 
 ///////////////////////

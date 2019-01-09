@@ -71,7 +71,7 @@ recommendationAlgorithms.o: ../cryptocurrencyRecommendation/recommendationProble
 	run
 
 clean:
-	rm -rf experiment experiment.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o
+	rm -rf experiment experiment.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o recommendationAlgorithms.o
 
 check:
 	valgrind --track-origins=yes --leak-check=full --show-leak-kinds=all --vgdb-error=1 ./experiment -i dataSets/twitter_dataset_small.csv -c cluster.conf -o outputFile.txt -d euclidean -complete
