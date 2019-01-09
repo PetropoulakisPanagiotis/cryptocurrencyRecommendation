@@ -4,13 +4,14 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <list>
 #include <set>
 #include <unordered_set>
 #include <unordered_map>
 #include <algorithm>
 #include "../item/item.h"
 #include "../utils/utils.h"
+#include "../itemToken/itemToken.h"
+#include "../user/user.h"
 #include "fileHandler.h"
 
 using namespace std;
@@ -18,7 +19,7 @@ using namespace std;
 /* Read given file and extract points */
 /* WithId == 0, points have not id's  */
 /* WithId == 1, points have id's      */
-void readVectorPostsSet(string fileName, int withId, char delim, list<Item>& points, errorCode& status){
+void readVectorPostsSet(string fileName, int withId, char delim, vector<Item>& points, errorCode& status){
     ifstream file; 
     string line, word; // Line is splitted in words
     int i, wordsSize, specialChar;
@@ -170,6 +171,125 @@ void readVectorPostsSet(string fileName, int withId, char delim, list<Item>& poi
     file.close();
 }
 
+/* Read users, set users and posts */
+void readUsersSet(string fileName, char delim, vector<User>& users, vector<ItemToken>& tokenPosts, vector<unordered_set<string> >& allCoins, vector<string>& coins, unordered_map<string, double>& lexicon, errorCode& status){
+    ifstream file;
+    string line, word; // Line is splitted in words
+    int i, wordsSize;
+    int indexUser = 0;
+
+    string currIdUser, prevIdUser="none", currIdPost;
+    vector<vector<int> > idPostUsers;
+    vector<int> idUsers;
+    int intId, intIdPost;
+
+    status = SUCCESS;
+
+    /* Check parameters */
+    if(fileName.length() == 0){
+        status = INVALID_PARAMETERS;
+        return;
+    }
+
+    /* Clear */
+    users.clear();
+    tokenPosts.clear();
+
+    file.open(fileName);
+
+    /* Check if file opened properly */
+    if(!file){
+        status = INVALID_USER;
+        return;
+    }
+
+    /* Read lines in file */
+    while(getline(file, line)){
+        /* Discard empty lines */
+        if(line.length() == 0)
+            continue;
+
+        /* Split line */
+        std::istringstream wordStream(line);
+        vector<string> words;
+
+        /* Get tokens + score */
+        while(getline(wordStream, word, delim))
+            words.push_back(word);
+
+        wordsSize = words.size();
+
+        if(wordsSize < 3){
+            status = INVALID_USER;
+            return;
+        }
+
+        /* Read id */
+        currIdUser = words[0];
+        currIdPost = words[1];
+
+        try{
+            intId = stoi(currIdUser);
+        }
+        catch(...){
+            status = INVALID_USER;
+            return;
+        }
+
+        try{
+            intIdPost = stoi(currIdPost);
+        }
+        catch(...){
+            status = INVALID_USER;
+            return;
+        }
+
+        vector<string> tokens;
+
+        /* Read tokens */
+        for(i = 2; i < wordsSize; i++){
+            /* Fix tokens */
+            tokens.push_back(words[i]);
+        } // End for - read coins
+
+        /* Fix token posts */
+        tokenPosts.push_back(ItemToken(tokens, status));
+        if(status != SUCCESS){
+            status = INVALID_USER;
+            return;
+        }
+
+        /*  First user */
+        if(prevIdUser == "none"){
+            idUsers.push_back(intId);
+            idPostUsers.push_back(vector<int>());
+            idPostUsers[indexUser].push_back(intIdPost);
+        }
+        else if(prevIdUser != currIdUser){
+            indexUser++;
+            idUsers.push_back(intId);
+            idPostUsers.push_back(vector<int>());
+            idPostUsers[indexUser].push_back(intIdPost);
+        }
+        else{
+            idPostUsers[indexUser].push_back(intIdPost);
+        }
+
+        prevIdUser = currIdUser;
+    } // End while - Read line
+
+    /* Create users */
+    for(i = 0; i < (int)idUsers.size(); i++){
+        users.push_back(User(idUsers[i], idPostUsers[i], allCoins, coins, lexicon, tokenPosts, status));
+        if(status != SUCCESS){
+            status = INVALID_USER;
+            return;
+        }
+    } // End for - create users
+
+    file.close();
+}
+
 /* Read coins and return map and vector(with categories) */
 void readCoinsSet(std::string fileName, char delim, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, errorCode& status){
     ifstream file;
@@ -207,7 +327,7 @@ void readCoinsSet(std::string fileName, char delim, std::vector<std::unordered_s
         std::istringstream wordStream(line);
         vector<string> words;
 
-        /* Get tokens + score */
+        /* Get coins */
         while(getline(wordStream, word, delim))
             words.push_back(word);
 

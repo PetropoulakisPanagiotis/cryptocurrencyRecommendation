@@ -57,7 +57,6 @@ User::User(int id, vector<int>& idPosts, vector<unordered_set<string> >& allCoin
 
     int flag;
 
-    /* Fix sentiment */
     flag = fixSentimentConstructor(this->sentiment, this->unknownCoins, this->idPosts, *this->allCoins, *this->coins, *this->lexicon, *this->allPosts, status);
     if(status != SUCCESS){
         this->id = -1;
