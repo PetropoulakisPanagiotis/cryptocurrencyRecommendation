@@ -6,6 +6,7 @@
 #include <vector>
 #include <list>
 #include <set>
+#include <unordered_set>
 #include <unordered_map>
 #include <algorithm>
 #include "../item/item.h"
@@ -157,7 +158,7 @@ void readVectorPostsSet(string fileName, int withId, char delim, list<Item>& poi
                 return;
             }
         }
-        
+
     } // End while - Read line
 
     /* Small number of points */
@@ -169,12 +170,84 @@ void readVectorPostsSet(string fileName, int withId, char delim, list<Item>& poi
     file.close();
 }
 
+/* Read coins and return map and vector(with categories) */
+void readCoinsSet(std::string fileName, char delim, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, errorCode& status){
+    ifstream file;
+    string line, word; // Line is splitted in words
+    int i, wordsSize;
+    int numLine = 0;
+
+    status = SUCCESS;
+
+    /* Check parameters */
+    if(fileName.length() == 0){
+        status = INVALID_PARAMETERS;
+        return;
+    }
+
+    /* Clear coins */
+    allCoins.clear();
+    coins.clear();
+
+    file.open(fileName);
+
+    /* Check if file opened properly */
+    if(!file){
+        status = INVALID_COINS;
+        return;
+    }
+
+    /* Read lines in file */
+    while(getline(file, line)){
+        /* Discard empty lines */
+        if(line.length() == 0)
+            continue;
+
+        /* Split line */
+        std::istringstream wordStream(line);
+        vector<string> words;
+
+        /* Get tokens + score */
+        while(getline(wordStream, word, delim))
+            words.push_back(word);
+
+        string currWordCoin; // Change form of word
+        wordsSize = words.size();
+
+        if(wordsSize < 1){
+            status = INVALID_COINS;
+            return;
+        }
+
+        allCoins.push_back(unordered_set<string>());
+
+        /* Read coins */
+        for(i = 0; i < wordsSize; i++){
+
+            /* Read words */
+            currWordCoin = words[i];
+
+            /* Fix set */
+            allCoins[numLine].insert(currWordCoin);
+        } // End for - read coins
+
+        /* Fix vector */
+        if(wordsSize >= 5)
+            coins.push_back(words[4]);
+        else
+            coins.push_back(words[0]);
+
+        numLine++;
+    } // End while - Read line
+
+    file.close();
+}
+
 /* Read lexicon with scores. Return map */
 void readLexiconSet(string fileName, char delim, unordered_map<string, double>& lexicon, errorCode& status){
     ifstream file;
     string line, word; // Line is splitted in words
-    int i, wordsSize, specialChar;
-    double currComponent;
+    int wordsSize;
 
     status = SUCCESS;
 
