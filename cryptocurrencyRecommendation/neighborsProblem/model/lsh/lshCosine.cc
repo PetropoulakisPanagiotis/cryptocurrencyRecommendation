@@ -4,6 +4,7 @@
 #include <list>
 #include <cmath>
 #include <new>
+#include <algorithm>
 #include "lsh.h"
 #include "../../hashFunction/hashFunction.h"
 #include "../../../item/item.h"
@@ -370,6 +371,120 @@ void lshCosine::radiusNeighbors(Item& query, int radius, list<int>& neighborsInd
         } // End for - Scan list
     } // End for - Tables
 }
+
+/* Find neighbors of given query and sort them based on distance */
+/* P is the number of neighbors to be returned. If neighbors are */
+/* less in one bucket scan all items                             */
+void lshCosine::simpleNeighbors(Item& query, list<int>& neighborsIds, int p, errorCode& status) {
+    int i, pos;
+    double currDist; // Distance of a point in list
+    list<entry>::iterator iter;
+    unordered_set<string> visited; // Visited points
+    string currId;
+    vector<neighborNode> neighbors;
+
+    status = SUCCESS;
+
+    /* Check parameters */
+    if(p < MIN_P){
+        status = INVALID_P;
+        return;
+    }
+
+    /* Check model */
+    if(this->fitted == 0){
+        status = METHOD_UNFITTED;
+        return;
+    }
+
+    if(this->k == -1){
+        status = INVALID_METHOD;
+        return;
+    }
+
+    /* Clear given list */
+    neighborsIds.clear();
+
+    /* Scan all tables */
+    for(i = 0; i < this->l; i++){
+
+        /* Find position in table */
+        pos = this->hashFunctions[i]->hash(query, status);
+        if(status != SUCCESS)
+            return;
+
+        /* Empty list */
+        if(this->tables[i][pos].size() == 0)
+            continue;
+
+        /* Scan list of specific bucket */
+        for(iter = this->tables[i][pos].begin(); iter != this->tables[i][pos].end(); iter++){
+
+            currId = iter->point->getId();
+            if(currId == query.getId())
+                continue;
+
+            /* Same point */
+            currId = this->points[i].getId();
+            if(currId == query.getId())
+                continue;
+
+            /* Not found - add it */
+            if(visited.find(currId) == visited.end()){
+                visited.insert(currId);
+            }
+            else
+                continue;
+
+            /* Find current distance */
+            currDist = iter->point->cosineDist(query, status);
+            if(status != SUCCESS)
+                return;
+
+            neighbors.push_back(neighborNode(stoi(currId), currDist));
+        } // End for - Scan list
+    } // End for - Tables
+
+    /* Check if Neighbors are less than p */
+    /* Copy all items                     */
+    if((int)neighbors.size() < p){
+
+        for(i = 0; i < (int)this->points.size(); i++){
+
+            currId = this->points[i].getId();
+            if(currId == query.getId())
+                continue;
+
+            /* Not found - add it */
+            if(visited.find(currId) == visited.end()){
+                visited.insert(currId);
+            }
+            else
+                continue;
+
+            /* Find current distance */
+            currDist = iter->point->cosineDist(query, status);
+            if(status != SUCCESS)
+                return;
+
+            neighbors.push_back(neighborNode(stoi(currId), currDist));
+        } // End for scan all poins
+    }
+
+    /* Sort neighbors */
+    sort(neighbors.begin(), neighbors.end(), neighborsCompare());
+
+    /* Fix given list */
+    for(i = 0; i < (int)neighbors.size(); i++){
+
+        /* P neighbors copied */
+        if(i == p)
+            return;
+
+        neighborsIds.push_back(neighbors[i].pos);
+    } // End for - fix list
+}
+
 
 /* Find the nearest neighbor of a given point */
 void lshCosine::nNeighbor(Item& query, Item& nNeighbor, double* neighborDistance, errorCode& status){

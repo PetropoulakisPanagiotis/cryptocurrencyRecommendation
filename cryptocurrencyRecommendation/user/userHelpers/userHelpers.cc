@@ -96,7 +96,7 @@ void fixSentiment(vector<double>& sentiment, vector<int>& unknownCoins, vector<u
     status = SUCCESS;
 
     /* Set number of tokens of current post */
-    totalTokens = allPosts[idPost - 1].getSizeTokens(status);
+    totalTokens = allPosts[idPost].getSizeTokens(status);
     if(status != SUCCESS)
         return;
 
@@ -112,7 +112,7 @@ void fixSentiment(vector<double>& sentiment, vector<int>& unknownCoins, vector<u
     for(i = 0; i < totalTokens; i++){
 
         /* Get current token */
-        currToken = allPosts[idPost - 1].getToken(i, status);
+        currToken = allPosts[idPost].getToken(i, status);
         if(status != SUCCESS)
             return;
 

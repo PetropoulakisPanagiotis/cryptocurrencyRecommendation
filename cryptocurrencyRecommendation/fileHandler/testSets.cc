@@ -38,8 +38,9 @@ int main(void){
     vector<User> users;
     vector<ItemToken> tokenPosts;
     char delimUsers = '\t';
+    int totalPosts = 5000;
 
-    readUsersSet("../../experiment/sets/tweets_dataset_small.csv", delimUsers, users, tokenPosts, allCoins, coins, lexicon, status);
+    readUsersSet("../../experiment/sets/tweets_dataset_small.csv", delimUsers, totalPosts, users, tokenPosts, allCoins, coins, lexicon, status);
     printf("Users status: \n");
     printError(status);
 
@@ -73,6 +74,7 @@ int main(void){
         cout << ref2[i] << "|";
 
     cout << "\n";
+
     return 0;
 }
 // Petropoulakyyis Panagiotis

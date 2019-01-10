@@ -16,24 +16,6 @@ class lshEuclidean: public model{
             int pos; // Position of point
         }entry;
 
-        /* Node to keep neighbors of item and it's distance */
-        /* Use it for simple search                         */
-        typedef struct neighborNode{
-            std::string pos;
-            double dist;
-
-            neighborNode(std::string pos, double dist){
-                this->pos = pos;
-                this->dist = dist;
-            }
-        }neighborNode;
-
-        struct neighborsCompare{
-            bool operator()(const neighborNode& x, const neighborNode& y) const{
-                return x.dist < y.dist;
-            }
-        };
-
         std::vector<Item> points; // Keep points
         std::vector<std::vector<std::list<entry> > > tables; // Each table is a hash table(vector of lists)
         std::vector<hashFunction*> hashFunctions; // Each table has one hash function
@@ -58,7 +40,6 @@ class lshEuclidean: public model{
 
         void radiusNeighbors(Item& query, int radius, std::list<Item>& neighbors, std::list<double>* neighborsDistances, errorCode& status);
         void radiusNeighbors(Item& query, int radius, std::list<int>& neighborsIndexes, std::list<double>* neighborsDistances, errorCode& status);
-        void simpleNeighbors(Item& query, std::list<std::string>& neighborsIds, int p, errorCode& status) ;
 
         void nNeighbor(Item& query, Item& nNeighbor, double* neighborDistance, errorCode& status);
 
@@ -78,6 +59,24 @@ class lshCosine: public model{
             Item* point; // Use pointer - Save memory
             int pos; // Position of point
         }entry;
+
+        /* Node to keep neighbors of item and it's distance */
+        /* Use it for simple search                         */
+        typedef struct neighborNode{
+            int pos;
+            double dist;
+
+            neighborNode(int pos, double dist){
+                this->pos = pos;
+                this->dist = dist;
+            }
+        }neighborNode;
+
+        struct neighborsCompare{
+            bool operator()(const neighborNode& x, const neighborNode& y) const{
+                return x.dist < y.dist;
+            }
+        };
 
         std::vector<Item> points; // Keep points
         std::vector<std::vector<std::list<entry> > > tables; // Each table is a hash table(vector of lists)
@@ -100,6 +99,7 @@ class lshCosine: public model{
 
         void radiusNeighbors(Item& query, int radius, std::list<Item>& neighbors, std::list<double>* neighborsDistances, errorCode& status);
         void radiusNeighbors(Item& query, int radius, std::list<int>& neighborsIndexes, std::list<double>* neighborsDistances, errorCode& status);
+        void simpleNeighbors(Item& query, std::list<int>& neighborsIds, int p, errorCode& status) ;
         void nNeighbor(Item& query, Item& nNeighbor, double* neighborDistance, errorCode& status);
         
         int getNumberOfPoints(errorCode& status);

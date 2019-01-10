@@ -172,7 +172,7 @@ void readVectorPostsSet(string fileName, int withId, char delim, vector<Item>& p
 }
 
 /* Read users, set users and posts */
-void readUsersSet(string fileName, char delim, vector<User>& users, vector<ItemToken>& tokenPosts, vector<unordered_set<string> >& allCoins, vector<string>& coins, unordered_map<string, double>& lexicon, errorCode& status){
+void readUsersSet(string fileName, char delim, int totalPosts, vector<User>& users, vector<ItemToken>& tokenPosts, vector<unordered_set<string> >& allCoins, vector<string>& coins, unordered_map<string, double>& lexicon, errorCode& status){
     ifstream file;
     string line, word; // Line is splitted in words
     int i, wordsSize;
@@ -182,14 +182,19 @@ void readUsersSet(string fileName, char delim, vector<User>& users, vector<ItemT
     vector<vector<int> > idPostUsers;
     vector<int> idUsers;
     int intId, intIdPost;
+    vector<vector<string> > tmpTokenVector;
 
     status = SUCCESS;
 
     /* Check parameters */
-    if(fileName.length() == 0){
+    if(fileName.length() == 0 || totalPosts <= 0){
         status = INVALID_PARAMETERS;
         return;
     }
+
+    /* Initialize token posts */
+    for(i = 0; i < totalPosts; i++)
+        tmpTokenVector.push_back(vector<string>());
 
     /* Clear */
     users.clear();
@@ -244,39 +249,45 @@ void readUsersSet(string fileName, char delim, vector<User>& users, vector<ItemT
             return;
         }
 
-        vector<string> tokens;
+        /* Check parameters */
+        if(intIdPost > totalPosts){
+            status = INVALID_PARAMETERS;
+            return;
+        }
 
         /* Read tokens */
         for(i = 2; i < wordsSize; i++){
             /* Fix tokens */
-            tokens.push_back(words[i]);
+            tmpTokenVector[intIdPost - 1].push_back(words[i]);
         } // End for - read coins
-
-        /* Fix token posts */
-        tokenPosts.push_back(ItemToken(tokens, status));
-        if(status != SUCCESS){
-            status = INVALID_USER;
-            return;
-        }
 
         /*  First user */
         if(prevIdUser == "none"){
             idUsers.push_back(intId);
             idPostUsers.push_back(vector<int>());
-            idPostUsers[indexUser].push_back(intIdPost);
+            idPostUsers[indexUser].push_back(intIdPost - 1);
         }
         else if(prevIdUser != currIdUser){
             indexUser++;
             idUsers.push_back(intId);
             idPostUsers.push_back(vector<int>());
-            idPostUsers[indexUser].push_back(intIdPost);
+            idPostUsers[indexUser].push_back(intIdPost - 1);
         }
         else{
-            idPostUsers[indexUser].push_back(intIdPost);
+            idPostUsers[indexUser].push_back(intIdPost - 1);
         }
 
         prevIdUser = currIdUser;
     } // End while - Read line
+
+    /* Fix token posts */
+    for(i = 0; i < totalPosts; i++){
+        tokenPosts.push_back(ItemToken(tmpTokenVector[i], status));
+        if(status != SUCCESS){
+            status = INVALID_USER;
+            return;
+        }
+    }
 
     /* Create users */
     for(i = 0; i < (int)idUsers.size(); i++){

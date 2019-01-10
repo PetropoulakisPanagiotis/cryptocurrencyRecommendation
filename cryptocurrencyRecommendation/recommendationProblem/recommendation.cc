@@ -90,7 +90,7 @@ recommendation::recommendation(vector<ItemToken>& tokenPosts, vector<Item>& vect
     for(i = 0; i < this->pseudoUsersSize; i++){
 
         /* Create current pseudo user */
-        this->pseudoUsers.push_back(User((this->usersSize + i), clustersItems[i], *(this->allCoins), *(this->coins), *(this->lexicon), this->tokenPosts, status));
+        this->pseudoUsers.push_back(User(i, clustersItems[i], *(this->allCoins), *(this->coins), *(this->lexicon), this->tokenPosts, status));
         if(status != SUCCESS){
             delete this->clusterVectorPosts;
             this->clusterVectorPosts = NULL;
@@ -101,6 +101,16 @@ recommendation::recommendation(vector<ItemToken>& tokenPosts, vector<Item>& vect
     /* No error occured */
     this->fittedA = 0;
     this->fittedB = 0;
+}
+
+recommendation::~recommendation(){
+
+    if(this->fittedA == -1 || this->fittedB == -1){
+        return;
+    }
+
+    if(this->clusterVectorPosts != NULL)
+        delete this->clusterVectorPosts;
 }
 
 /* Recommend coins for users using lsh method */
@@ -139,7 +149,11 @@ void recommendation::fitLsh(vector<vector<int> >& predictedLshUsers, vector<vect
         return;
 
     /* Return results */
+    predictedLshUsers = this->predictedLshUsers;
+    predictedLshPseudoUsers = this->predictedLshPseudoUsers;
 
+    /* Fitted method */
+    this->fittedA = 1;
 }
 
 // PetropoulakisPanagiotis

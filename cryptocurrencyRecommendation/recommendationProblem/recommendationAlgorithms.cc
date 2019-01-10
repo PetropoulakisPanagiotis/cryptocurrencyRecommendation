@@ -30,7 +30,7 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
 
     status = SUCCESS;
 
-    /* Fix sentiment */
+    /* Get sentiment of users */
     for(i = 0; i < this->usersSize; i++){
 
         /* Discard invalid users */
@@ -60,7 +60,7 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
     model* lshUsersModel;
 
     /* Create model */
-    lshUsersModel = new lshEuclidean();
+    lshUsersModel = new lshCosine();
 
     /* Fit model */
     lshUsersModel->fit(sentimentUsers, status);
@@ -73,8 +73,8 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
     for(i = 0; i < this->usersSize; i++){
         vector<User*> neighborUsers;
         vector<int> newCoins;
-        list<string> neighborsIds;
-        list<string>::iterator iterNeighborsIds;
+        list<int> neighborsIds;
+        list<int>::iterator iterNeighborsIds;
 
         /* Get status of user */
         valid = this->users[i].getStatus(status);
@@ -97,13 +97,13 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
         }
 
         /* Find neighbors */
-        lshUsersModel->simpleNeighbors(*iterSentimentUsers,neighborsIds, this->p, status);
+        lshUsersModel->simpleNeighbors(*iterSentimentUsers, neighborsIds, this->p, status);
         if(status != SUCCESS)
             return;
 
-        /* Scan neighborsIds and fFix neighbors users */
+        /* Scan neighborsIds and fix neighbors users */
         for(iterNeighborsIds = neighborsIds.begin(); iterNeighborsIds != neighborsIds.end(); iterNeighborsIds++){
-            neighborUsers.push_back(&this->users[stoi(*iterNeighborsIds)]);
+            neighborUsers.push_back(&this->users[*iterNeighborsIds]);
         } // End for - scan neighborsIds
 
         /* Recommend coins */
@@ -115,7 +115,7 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
         predictedLshUsers.push_back(newCoins);
 
         iterSentimentUsers++;
-    } // End for
+    } // End for - Predict coins for users
 }
 
 void recommendation::recommendationLshPseudoUsers(int coinsReturned, errorCode& status){}
