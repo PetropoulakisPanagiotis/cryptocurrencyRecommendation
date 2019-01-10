@@ -2,11 +2,14 @@
 CC = g++
 FLAGS = -g -Wall
 
-exmperiment: experiment.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o recommendationAlgorithms.o
-	$(CC) -o experiment $(FLAGS) experiment.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o recommendationAlgorithms.o -std=c++11
+recommendation: experiment.o experimentHelpers.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o recommendationAlgorithms.o
+	$(CC) -o recommendation $(FLAGS) experiment.o experimentHelpers.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o recommendationAlgorithms.o -std=c++11
 
 experiment.o: experiment.cc
 	$(CC) -c  $(FLAGS) experiment.cc -std=c++11
+
+experimentHelpers.o: helpers/experimentHelpers.cc
+	$(CC) -c  $(FLAGS) helpers/experimentHelpers.cc -std=c++11
 
 utils.o: ../cryptocurrencyRecommendation/utils/utils.cc
 	$(CC) -c $(FLAGS) ../cryptocurrencyRecommendation/utils/utils.cc -std=c++11
@@ -71,10 +74,10 @@ recommendationAlgorithms.o: ../cryptocurrencyRecommendation/recommendationProble
 	run
 
 clean:
-	rm -rf experiment experiment.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o recommendationAlgorithms.o
+	rm -rf recommendation experiment.o experimentHelpers.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o recommendationAlgorithms.o output.txt
 
 check:
-	valgrind --track-origins=yes --leak-check=full --show-leak-kinds=all --vgdb-error=1 ./experiment -i dataSets/twitter_dataset_small.csv -c cluster.conf -o outputFile.txt -d euclidean -complete
+	valgrind --track-origins=yes --leak-check=full --show-leak-kinds=all --vgdb-error=1	./recommendation -d sets/tweets_dataset_small.csv -v sets/twitter_dataset_small_vector.csv -c sets/coins_queries.csv -l sets/vader_lexicon.csv -o output.txt
 
 run:
-	./experiment -i dataSets/twitter_dataset_small.csv -c cluster.conf -o outputFile.txt -d euclidean
+	./recommendation -d sets/tweets_dataset_small.csv -v sets/twitter_dataset_small_vector.csv -c sets/coins_queries.csv -l sets/vader_lexicon.csv -o output.txt
