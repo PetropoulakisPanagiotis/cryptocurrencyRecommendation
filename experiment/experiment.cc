@@ -37,6 +37,16 @@ int main(int argc, char **argv){
         return 0;
     }
 
+    /* Pick recommendation model */
+    recommendation* recommendationModel;
+
+    /* Create model */
+    recommendationModel = new recommendation(tokenPosts, vectorPosts, users, allCoins, coins, lexicon, status);
+    if(status != SUCCESS){
+        printError(status);
+        delete recommendationModel;
+        return 0;
+    }
     return 0;
 }
 // Petropoulakis Panagiotis

@@ -83,11 +83,17 @@ recommendation::recommendation(vector<ItemToken>& tokenPosts, vector<Item>& vect
         return;
     }
 
+
+    int activeClusters = 0;
+
     /* Fix pseudo users - cluster == user with it's posts(tokens) */
     /* Vector clustering -> clusters "converts" to pseudo users   */
     /* Each cluster has some vectorPosts -> pseudo user contains  */
     /* these posts but in tokenize form                           */
     for(i = 0; i < this->pseudoUsersSize; i++){
+
+        if((int)clustersItems[i].size() == 0)
+            continue;
 
         /* Create current pseudo user */
         this->pseudoUsers.push_back(User(i, clustersItems[i], *(this->allCoins), *(this->coins), *(this->lexicon), this->tokenPosts, status));
@@ -96,7 +102,10 @@ recommendation::recommendation(vector<ItemToken>& tokenPosts, vector<Item>& vect
             this->clusterVectorPosts = NULL;
             return;
         }
+        activeClusters++;
     } // End for - pseudo users
+
+    this->pseudoUsersSize = activeClusters;
 
     /* No error occured */
     this->fittedA = 0;

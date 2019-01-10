@@ -40,11 +40,6 @@ void cluster::fixCluster(errorCode& status, std::list<Item>& items, int numClust
         return;
     }
 
-    if((items.size() / numClusters) > 2){
-        status = INVALID_CLUSTERS;
-        return; 
-    }
-
     if(initAlgo != "random" && initAlgo != "k-means++"){
         status = INVALID_ALGO;
         return;
@@ -145,11 +140,6 @@ void cluster::fixCluster(errorCode& status, std::vector<Item>& items, int numClu
     if(tol < MIN_TOL || tol > MAX_TOL){
         status = INVALID_TOL;
         return;
-    }
-
-    if((items.size() / numClusters) > 2){
-        status = INVALID_CLUSTERS;
-        return; 
     }
 
     if(initAlgo != "random" && initAlgo != "k-means++"){

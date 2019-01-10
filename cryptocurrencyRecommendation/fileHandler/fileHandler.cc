@@ -39,6 +39,7 @@ void readVectorPostsSet(string fileName, int withId, char delim, vector<Item>& p
         return;
     }
 
+
     /* Clear points, types */
     points.clear();
 
@@ -67,7 +68,7 @@ void readVectorPostsSet(string fileName, int withId, char delim, vector<Item>& p
         /* Get points */
         while(getline(wordStream, word, delim))
             words.push_back(word);
-       
+
         /* Receive id's - First word in line */
         if(withId == 1){
             iterSet = ids.find(words[0]); 

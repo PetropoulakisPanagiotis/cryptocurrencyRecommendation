@@ -482,7 +482,6 @@ void cluster::getSilhouette(vector<double>& silhouetteArray, errorCode& status){
     } // End for - silhouette per cluster
 
     /* Fix overall silhouette */
-    cout << silhouetteArray[this->numClusters] << "-" << this->n << "\n";
     silhouetteArray[this->numClusters] /= this->n;
 }
 
@@ -552,6 +551,12 @@ void cluster::getClustersItems(vector<vector<int> >& clustersItems, errorCode& s
         return;
     }
 
+    if(this->fitted != 1){
+        status = METHOD_UNFITTED;
+        return;
+    }
+
+
     /* Reset parameter */
     clustersItems.clear();
 
@@ -561,6 +566,10 @@ void cluster::getClustersItems(vector<vector<int> >& clustersItems, errorCode& s
 
     /* Copy clusters items  */
     for(i = 0; i < this->numClusters; i++){
+
+        /* Init current vector */
+        clustersItems.push_back(vector<int>());
+
         for(iterInt = this->clustersItems[i].begin(); iterInt != this->clustersItems[i].end(); iterInt++)
             clustersItems[i].push_back(*iterInt);
     } // End for - fix clusters

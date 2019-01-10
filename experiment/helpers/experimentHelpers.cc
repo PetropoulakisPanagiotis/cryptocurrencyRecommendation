@@ -1,9 +1,16 @@
 #include <iostream>
+#include <string>
 #include <string.h>
-#include <list>
-#include <vector>
-#include <chrono>
 #include <fstream>
+#include <vector>
+#include <unordered_set>
+#include <unordered_map>
+#include "../../cryptocurrencyRecommendation/item/item.h"
+#include "../../cryptocurrencyRecommendation/itemToken/itemToken.h"
+#include "../../cryptocurrencyRecommendation/user/user.h"
+#include "../../cryptocurrencyRecommendation/recommendationProblem/recommendation.h"
+#include "../../cryptocurrencyRecommendation/fileHandler/fileHandler.h"
+#include "../../cryptocurrencyRecommendation/utils/utils.h"
 #include "experimentHelpers.h"
 
 using namespace std;
@@ -37,5 +44,37 @@ int readArguments(int argc, char **argv, std::string& usersFile, std::string& ve
     return 0;
 }
 
-void setData(std::string& usersFile, std::vector<User>& users, std::vector<ItemToken>& tokenPosts, std::string& vectorTweetsFile, std::vector<Item>& vectorPosts, std::string& coinsFile, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::string& lexiconFile, std::unordered_map<std::string, double>& lexicon, errorCode& status){}
+/* Read files and set users, posts, coins and lexicon */
+void setData(string& usersFile, vector<User>& users, vector<ItemToken>& tokenPosts, string& vectorTweetsFile, vector<Item>& vectorPosts, string& coinsFile, vector<unordered_set<string> >& allCoins, vector<string>& coins, string& lexiconFile, unordered_map<string, double>& lexicon, errorCode& status){
+
+    status = SUCCESS;
+
+    /* Reset vectors etc */
+    users.clear();
+    tokenPosts.clear();
+    vectorPosts.clear();
+    allCoins.clear();
+    coins.clear();
+    lexicon.clear();
+
+    ///////////////////////////////////
+    /* Read files and set stractures */
+    ///////////////////////////////////
+
+    readVectorPostsSet(vectorTweetsFile, 1, ',', vectorPosts, status);
+    if(status != SUCCESS)
+        return;
+
+    readCoinsSet(coinsFile, '\t', allCoins, coins, status);
+    if(status != SUCCESS)
+        return;
+
+    readLexiconSet(lexiconFile, '\t', lexicon, status);
+    if(status != SUCCESS)
+        return;
+
+    readUsersSet(usersFile, '\t', vectorPosts.size(), users, tokenPosts, allCoins, coins, lexicon, status);
+    if(status != SUCCESS)
+        return;
+}
 // Petropoulakis Panagiotis
