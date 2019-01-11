@@ -93,7 +93,7 @@ User::User(int id, vector<int>& idPosts, vector<unordered_set<string> >& allCoin
 }
 
 /* Recommend the best(p) coins in current user based on given neighbors */
-void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins, errorCode& status){
+void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins, int metrice, errorCode& status){
     int i, totalUnknown = 0, j; // Total unknown coins
     double similaritySum = 0, normalizingFactor = 0, currVal, simpleSimilaritySum;
     vector<newCoinNode> coinsHeap; // Keep p best coins based on score
@@ -108,6 +108,11 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
     /* Check parameters */
     if(p <= 0 || p > (int)this->coins->size()){
         status = INVALID_P;
+        return;
+    }
+
+    if(metrice != 0 && metrice != 1){
+        status = INVALID_METRICE;
         return;
     }
 
@@ -168,7 +173,7 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
                 if(neighborUsers[j]->invalid == 1)
                     continue;
 
-                currVal = similarityFunc(this->sentiment, neighborUsers[j]->sentiment, status);
+                currVal = similarityFunc(this->sentiment, neighborUsers[j]->sentiment, metrice, status);
                 if(status != SUCCESS)
                     return;
                 simpleSimilaritySum += currVal;

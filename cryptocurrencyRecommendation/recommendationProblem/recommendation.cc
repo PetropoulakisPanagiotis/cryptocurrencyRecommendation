@@ -166,4 +166,47 @@ void recommendation::fitLsh(vector<vector<int> >& predictedLshUsers, vector<vect
     this->fittedA = 1;
 }
 
+/* Recommend coins for users using clustering method */
+/* Recommend coins based on neighbors users          */
+/* and based on pseudo neighbors users               */
+void recommendation::fitClustering(vector<vector<int> >& predictedClusteringUsers, vector<vector<int> >& predictedClusteringPseudoUsers, errorCode& status, int coinsUsersReturn, int coinsPseudoUsersReturn){
+
+    status = SUCCESS;
+
+    if(this->fittedA == -1 || this->fittedB == -1){
+        status = INVALID_METHOD;
+        return;
+    }
+
+    /* Already fitted return calculated predicted coins      */
+    /* Note use another method if you whant to use different */
+    /* default values(coinsUsersReturn etc.)                 */
+    if(this->fittedB == 1){
+        predictedClusteringUsers = this->predictedClusteringUsers;
+        predictedClusteringPseudoUsers = this->predictedClusteringPseudoUsers;
+        return;
+    }
+
+    ////////////////////////////////////////////////////
+    /* Find neighbor users with lsh and predict coins */
+    ////////////////////////////////////////////////////
+    this->recommendationClusteringUsers(coinsUsersReturn, status);
+    if(status != SUCCESS)
+        return;
+
+    ///////////////////////////////////////////////////////////
+    /* Find neighbor pseudo users with lsh and predict coins */
+    ///////////////////////////////////////////////////////////
+    this->recommendationClusteringPseudoUsers(coinsPseudoUsersReturn, status);
+    if(status != SUCCESS)
+        return;
+
+    /* Return results */
+    predictedClusteringUsers = this->predictedClusteringUsers;
+    predictedClusteringPseudoUsers = this->predictedClusteringPseudoUsers;
+
+    /* Fitted method */
+    this->fittedB = 1;
+}
+
 // PetropoulakisPanagiotis

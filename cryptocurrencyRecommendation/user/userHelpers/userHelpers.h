@@ -46,5 +46,5 @@ int fixSentimentConstructor(std::vector<double>& sentiment, std::vector<int>& un
 //////////////////////////////////////////////////////////////////
 double norm(std::vector<double>& x, errorCode& status);
 double innerProduct(std::vector<double>& x, std::vector<double>& y, errorCode& status);
-double similarityFunc(std::vector<double>& x, std::vector<double>& y, errorCode& status);
+double similarityFunc(std::vector<double>& x, std::vector<double>& y, int metrice, errorCode& status);
 // PetropoulakisPanagiotis

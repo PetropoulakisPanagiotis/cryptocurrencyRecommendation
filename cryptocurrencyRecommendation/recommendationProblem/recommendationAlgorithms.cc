@@ -182,7 +182,7 @@ void recommendation::recommendationLshPseudoUsers(int coinsReturned, errorCode& 
         /* Invalid user */
         if(valid == 1){
             /* Recommend random coins */
-            this->users[i].recommend(coinsReturned, neighborUsers, newCoins, status);
+            this->users[i].recommend(coinsReturned, neighborUsers, newCoins, 0, status);
             if(status != SUCCESS)
                 return;
 
@@ -209,7 +209,7 @@ void recommendation::recommendationLshPseudoUsers(int coinsReturned, errorCode& 
         } // End for - scan neighborsIds
 
         /* Recommend coins */
-        this->users[i].recommend(coinsReturned, neighborUsers, newCoins, status);
+        this->users[i].recommend(coinsReturned, neighborUsers, newCoins, 0, status);
         if(status != SUCCESS)
             return;
 

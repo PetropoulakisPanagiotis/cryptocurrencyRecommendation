@@ -225,11 +225,15 @@ double innerProduct(vector<double>& x, vector<double>& y, errorCode& status){
 }
 
 /* Similarity function of two vectors */
-double similarityFunc(std::vector<double>& x, std::vector<double>& y, errorCode& status){
-    double dist = 0, mult;
-    double normX, normY;
+double similarityFunc(std::vector<double>& x, std::vector<double>& y, int metrice, errorCode& status){
+    double dist = 0;
 
     status = SUCCESS;
+
+    if(metrice != 0 && metrice != 1){
+        status = INVALID_METRICE;
+        return -1;
+    }
 
     /* Check dimensions */
     if(x.size() == 0 || y.size() == 0){
@@ -242,28 +246,48 @@ double similarityFunc(std::vector<double>& x, std::vector<double>& y, errorCode&
         return -1;
     }
 
-    dist = innerProduct(x, y, status);
-    if(status != SUCCESS)
-        return -1;
+    /* Cosine metrice */
+    if(metrice == 0){
+        double normX, normY, mult;
 
-    normX = norm(x, status);
-    if(status != SUCCESS)
-        return -1;
+        dist = innerProduct(x, y, status);
+        if(status != SUCCESS)
+            return -1;
 
-    normY = norm(y, status);
-    if(status != SUCCESS)
-        return -1;
+        normX = norm(x, status);
+        if(status != SUCCESS)
+            return -1;
 
-    mult = normX * normY;
+        normY = norm(y, status);
+        if(status != SUCCESS)
+            return -1;
 
-    if(mult == 0){
-        status = DIV_OVERFLOW;
-        return -1;
+        mult = normX * normY;
+
+        if(mult == 0){
+            status = DIV_OVERFLOW;
+            return -1;
+        }
+
+        dist = dist /  mult;
+
+        return dist;
     }
+    else{
+        int i, tmp, mult;
 
-    dist = dist /  mult;
+        for(i = 0; i < (int)x.size(); i++){
+            tmp = x[i] - y[i];
 
-    return dist;
+            mult = tmp * tmp;
+
+            dist += mult;
+        } // End for
+
+        dist = sqrt(dist);
+
+        return ((float)1 / (float)(1 + dist));
+    }
 }
 
 // PetropoulakisPanagiotis

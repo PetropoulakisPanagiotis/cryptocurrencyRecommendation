@@ -27,7 +27,7 @@ class User{
         User(int id, std::vector<int>& idPosts, std::vector<std::unordered_set<std::string> >& allCoins, std::vector<std::string>& coins, std::unordered_map<std::string, double>& lexicon, std::vector<ItemToken>& allPosts, errorCode& status);
 
         /* Recommend the best(p) coins in current user based on given neighbors */
-        void recommend(int p, std::vector<User*>& neighborUsers, std::vector<int>& newCoins, errorCode& status);
+        void recommend(int p, std::vector<User*>& neighborUsers, std::vector<int>& newCoins, int metrice, errorCode& status);
 
         /* Accessors */
         int getId(errorCode& status);
