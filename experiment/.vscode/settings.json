@@ -1,0 +1,6 @@
+{
+    "search.quickOpen.includeSymbols": true,
+    "search.showLineNumbers": true,
+    "debug.allowBreakpointsEverywhere": true,
+    "debug.enableAllHovers": true
+}

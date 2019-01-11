@@ -1,0 +1,27 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "./recommendation",
+            "args": [
+                "-d:sets/tweets_dataset_small.csv",
+                "-v:sets/twitter_dataset_small_vector.csv",
+                "-c:sets/coins_queries.csv",
+                "-l:sets/vader_lexicon.csv",
+                "-o:output.txt"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "silent"
+            },
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}

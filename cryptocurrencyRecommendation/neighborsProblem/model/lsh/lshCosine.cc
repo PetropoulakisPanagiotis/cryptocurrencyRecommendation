@@ -448,7 +448,6 @@ void lshCosine::simpleNeighbors(Item& query, list<int>& neighborsIds, int p, err
     /* Check if Neighbors are less than p */
     /* Copy all items                     */
     if((int)neighbors.size() < p){
-
         for(i = 0; i < (int)this->points.size(); i++){
 
             currId = this->points[i].getId();
@@ -463,7 +462,7 @@ void lshCosine::simpleNeighbors(Item& query, list<int>& neighborsIds, int p, err
                 continue;
 
             /* Find current distance */
-            currDist = iter->point->cosineDist(query, status);
+            currDist = this->points[i].cosineDist(query, status);
             if(status != SUCCESS)
                 return;
 
@@ -481,7 +480,7 @@ void lshCosine::simpleNeighbors(Item& query, list<int>& neighborsIds, int p, err
         if(i == p)
             return;
 
-        neighborsIds.push_back(neighbors[i].pos);
+        neighborsIds.push_back(stoi(this->points[neighbors[i].pos].getId()));
     } // End for - fix list
 }
 
@@ -489,7 +488,7 @@ void lshCosine::simpleNeighbors(Item& query, list<int>& neighborsIds, int p, err
 /* Find the nearest neighbor of a given point */
 void lshCosine::nNeighbor(Item& query, Item& nNeighbor, double* neighborDistance, errorCode& status){
     int i, pos, found = 0, flag = 0;
-    double minDist = -1; // Current minimum distance 
+    double minDist = -1; // Current minimum distance
     double currDist; // Distance of a point in list
     list<entry>::iterator iter;
     list<entry>::iterator iterNearestNeighbor;

@@ -102,6 +102,7 @@ recommendation::recommendation(vector<ItemToken>& tokenPosts, vector<Item>& vect
             this->clusterVectorPosts = NULL;
             return;
         }
+
         activeClusters++;
     } // End for - pseudo users
 

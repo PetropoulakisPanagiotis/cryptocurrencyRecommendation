@@ -10,6 +10,7 @@
 #include "../utils/utils.h"
 #include "userHelpers/userHelpers.h"
 #include "user.h"
+#include <unistd.h>
 
 using namespace std;
 
@@ -69,7 +70,6 @@ User::User(int id, vector<int>& idPosts, vector<unordered_set<string> >& allCoin
         this->invalid = 0;
 
         /* Find avg value of sentiment */
-
         int totalActiveCoins = 0;
         this->avgSentiment = 0;
 
@@ -83,13 +83,19 @@ User::User(int id, vector<int>& idPosts, vector<unordered_set<string> >& allCoin
         if(totalActiveCoins != 0)
             this->avgSentiment /= (double)totalActiveCoins;
 
+        /* Copy avg into unknown coins */
+        for(i = 0; i < (int)this->sentiment.size(); i++){
+            if(this->unknownCoins[i] == 0)
+                this->sentiment[i] = this->avgSentiment;
+        } // End for
+
     }
 }
 
 /* Recommend the best(p) coins in current user based on given neighbors */
 void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins, errorCode& status){
     int i, totalUnknown = 0, j; // Total unknown coins
-    double similaritySum = 0, normalizingFactor = 0, currVal;
+    double similaritySum = 0, normalizingFactor = 0, currVal, simpleSimilaritySum;
     vector<newCoinNode> coinsHeap; // Keep p best coins based on score
 
     status = SUCCESS;
@@ -144,8 +150,7 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
         }
 
         /* For every unkown coin predict user's behavior */
-        for(i = 0; this->unknownCoins.size(); i++){
-
+        for(i = 0; i < this->unknownCoins.size(); i++){
             /* Known coin */
             if(this->unknownCoins[i] == 1)
                 continue;
@@ -154,8 +159,9 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
 
             /* Reset  */
             similaritySum = 0;
+            simpleSimilaritySum = 0;
 
-           /* Scan users */
+            /* Scan users */
             for(j = 0; j < (int)neighborUsers.size(); j++){
 
                 /* Discard invalid users */
@@ -165,13 +171,12 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
                 currVal = similarityFunc(this->sentiment, neighborUsers[j]->sentiment, status);
                 if(status != SUCCESS)
                     return;
-
+                simpleSimilaritySum += currVal;
                 currVal = currVal * (neighborUsers[j]->sentiment[i] - neighborUsers[j]->avgSentiment);
-
                 similaritySum += currVal;
             } // End for scan users
 
-            if(similaritySum == 0){
+            if(simpleSimilaritySum == 0){
                 status = DIV_OVERFLOW;
                 return;
             }

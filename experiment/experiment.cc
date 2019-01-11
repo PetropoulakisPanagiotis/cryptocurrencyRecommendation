@@ -39,6 +39,11 @@ int main(int argc, char **argv){
 
     /* Pick recommendation model */
     recommendation* recommendationModel;
+    /* Vectors to save predicted coins */
+    vector<vector<int> > predictedLshUsers;
+    vector<vector<int> > predictedLshPseudoUsers;
+    vector<vector<int> > predictedClusteringUsers;
+    vector<vector<int> > predictedClusteringPseudoUsers;
 
     /* Create model */
     recommendationModel = new recommendation(tokenPosts, vectorPosts, users, allCoins, coins, lexicon, status);
@@ -47,6 +52,15 @@ int main(int argc, char **argv){
         delete recommendationModel;
         return 0;
     }
+
+    /* Fit model with lsh method */
+    recommendationModel->fitLsh(predictedLshUsers, predictedLshPseudoUsers, status);
+    if(status != SUCCESS){
+        printError(status);
+        delete recommendationModel;
+        return 0;
+    }
+
     return 0;
 }
 // Petropoulakis Panagiotis

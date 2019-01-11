@@ -38,7 +38,8 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
         if(status != SUCCESS)
             return;
 
-        if(valid == 0)
+        /* Invalid user */
+        if(valid == 1)
             continue;
 
         /* Get sentiment */
@@ -82,8 +83,7 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
             return;
 
         /* Invalid user */
-        if(valid == 0){
-
+        if(valid == 1){
             /* Recommend random coins */
             this->users[i].recommend(coinsReturned, neighborUsers, newCoins, status);
             if(status != SUCCESS)
@@ -95,7 +95,6 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
             iterSentimentUsers++;
             continue;
         }
-
         /* Find neighbors */
         lshUsersModel->simpleNeighbors(*iterSentimentUsers, neighborsIds, this->p, status);
         if(status != SUCCESS)
@@ -103,7 +102,7 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
 
         /* Scan neighborsIds and fix neighbors users */
         for(iterNeighborsIds = neighborsIds.begin(); iterNeighborsIds != neighborsIds.end(); iterNeighborsIds++){
-            neighborUsers.push_back(&this->users[*iterNeighborsIds]);
+            neighborUsers.push_back(&(this->users[*iterNeighborsIds]));
         } // End for - scan neighborsIds
 
         /* Recommend coins */
@@ -113,12 +112,112 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
 
         /* Fix vector of predicted */
         predictedLshUsers.push_back(newCoins);
-
         iterSentimentUsers++;
     } // End for - Predict coins for users
 }
 
-void recommendation::recommendationLshPseudoUsers(int coinsReturned, errorCode& status){}
+/* Find neighbor pseudo users with lsh and predict coins for users */
+void recommendation::recommendationLshPseudoUsers(int coinsReturned, errorCode& status){
+    /* Every pseudo user is represented with it's sentiment */
+    list<Item> sentimentPseudoUsers;
+    list<Item>::iterator iterSentimentPseudoUsers;
+    string currId;
+    int i, valid;
+
+    status = SUCCESS;
+
+    /* Get sentiment of pseudo users */
+    for(i = 0; i < this->pseudoUsersSize; i++){
+
+        /* Discard invalid pseudo users */
+        valid = this->pseudoUsers[i].getStatus(status);
+        if(status != SUCCESS)
+            return;
+
+        /* Invalid pseudo user */
+        if(valid == 1)
+            continue;
+
+        /* Get sentiment */
+        vector<double>* sentimentPseudoUser;
+
+        sentimentPseudoUser = this->pseudoUsers[i].getSentiment(status);
+        if(status != SUCCESS)
+            return;
+
+        currId = to_string(i);
+
+        /* Fix sentiment list */
+        sentimentPseudoUsers.push_back(Item(currId, *sentimentPseudoUser, status));
+        if(status != SUCCESS)
+            return;
+    } // End for
+
+    /* Pick model */
+    model* lshPseudoUsersModel;
+
+    /* Create model */
+    lshPseudoUsersModel = new lshCosine();
+
+    /* Fit model */
+    lshPseudoUsersModel->fit(sentimentPseudoUsers, status);
+    if(status != SUCCESS)
+            return;
+
+    iterSentimentPseudoUsers = sentimentPseudoUsers.begin();
+
+    /* For every user find it's neighbors and predict coins */
+    for(i = 0; i < this->usersSize; i++){
+        vector<User*> neighborUsers;
+        vector<int> newCoins;
+        list<int> neighborsIds;
+        list<int>::iterator iterNeighborsIds;
+        vector<double>* sentimentUser;
+
+        /* Get status of user */
+        valid = this->users[i].getStatus(status);
+        if(status != SUCCESS)
+            return;
+
+        /* Invalid user */
+        if(valid == 1){
+            /* Recommend random coins */
+            this->users[i].recommend(coinsReturned, neighborUsers, newCoins, status);
+            if(status != SUCCESS)
+                return;
+
+            /* Fix vector of predicted */
+            predictedLshPseudoUsers.push_back(newCoins);
+            continue;
+        }
+
+        sentimentUser = this->users[i].getSentiment(status);
+        if(status != SUCCESS)
+            return;
+
+        /* Convert user to item */
+        Item userItem(*sentimentUser, status);
+
+        /* Find neighbors */
+        lshPseudoUsersModel->simpleNeighbors(userItem, neighborsIds, this->p, status);
+        if(status != SUCCESS)
+            return;
+
+        /* Scan neighborsIds and fix neighbors users */
+        for(iterNeighborsIds = neighborsIds.begin(); iterNeighborsIds != neighborsIds.end(); iterNeighborsIds++){
+            neighborUsers.push_back(&(this->users[*iterNeighborsIds]));
+        } // End for - scan neighborsIds
+
+        /* Recommend coins */
+        this->users[i].recommend(coinsReturned, neighborUsers, newCoins, status);
+        if(status != SUCCESS)
+            return;
+
+        /* Fix vector of predicted */
+        predictedLshPseudoUsers.push_back(newCoins);
+    } // End for - Predict coins for users
+
+}
 void recommendation::recommendationClusteringUsers(int coinsReturned, errorCode& status){}
 void recommendation::recommendationClusteringPseudoUsers(int coinsReturned, errorCode& status){}
 
