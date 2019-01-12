@@ -78,8 +78,4 @@ void setData(string& usersFile, vector<User>& users, vector<ItemToken>& tokenPos
         return;
 }
 
-/* Write results in output file */
-void writeResults(std::ofstream& outputStream, std::vector<std::vector<int> >& predictedLshUsers, std::vector<std::vector<int> >& predictedLshPseudoUsers, std::vector<std::vector<int> >& predictedClusteringUsers, std::vector<std::vector<int> >& predictedClusteringPseudoUsers, std::vector<std::string>& coins, int validate){
-
-}
 // Petropoulakis Panagiotis
