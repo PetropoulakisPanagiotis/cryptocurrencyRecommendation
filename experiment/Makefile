@@ -72,6 +72,8 @@ recommendationAlgorithms.o: ../cryptocurrencyRecommendation/recommendationProble
 	clean
 	check
 	run
+	crash
+	stopCrash
 
 clean:
 	rm -rf recommendation experiment.o experimentHelpers.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o recommendationAlgorithms.o output.txt
@@ -81,3 +83,9 @@ check:
 
 run:
 	./recommendation -d sets/tweets_dataset_small.csv -v sets/twitter_dataset_small_vector.csv -c sets/coins_queries.csv -l sets/vader_lexicon.csv -o output.txt
+
+crash:
+	seq 40 | xargs -Iz make run
+
+stopCrash:
+	make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run 

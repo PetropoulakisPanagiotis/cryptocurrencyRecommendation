@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include <unordered_set>
@@ -54,12 +55,35 @@ int main(int argc, char **argv){
     }
 
     /* Fit model with lsh method */
-    recommendationModel->fitClustering(predictedLshUsers, predictedLshPseudoUsers, status);
+    recommendationModel->fitLsh(predictedLshUsers, predictedLshPseudoUsers, status);
     if(status != SUCCESS){
         printError(status);
         delete recommendationModel;
         return 0;
     }
+
+    /* Fit model with clustering method */
+    recommendationModel->fitClustering(predictedClusteringUsers, predictedClusteringPseudoUsers, status);
+    if(status != SUCCESS){
+        printError(status);
+        delete recommendationModel;
+        return 0;
+    }
+
+    /* Open output file */
+    ofstream outputStream;
+
+    outputStream.open(outputFile, ios::trunc);
+    if(!outputStream){
+        cout << "Can't open given output file\n";
+        delete recommendationModel;
+    }
+
+    /* Print results in file */
+   // writeResults(outputStream, predictedLshUsers, predictedLshPseudoUsers, predictedClusteringUsers, predictedClusteringPseudoUsers, coins, validate);
+
+    outputStream.close();
+    delete recommendationModel;
 
     return 0;
 }
