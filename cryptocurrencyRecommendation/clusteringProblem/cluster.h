@@ -77,6 +77,9 @@ class cluster{
 
         /* Find items in the same cluster of given index and return ids */
         void getNeighborsItem(int index, std::vector<int>& neighborsIds, errorCode& status);
+
+        /* Find nearest cluster of given query */
+        void getNearestCluster(Item& query, int& minClusterPos, errorCode& status);
 };
 
 /////////////////////////

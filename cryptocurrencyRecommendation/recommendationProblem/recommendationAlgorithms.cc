@@ -373,7 +373,147 @@ void recommendation::recommendationClusteringUsers(int coinsReturned, errorCode&
 }
 
 /* Find neighbor users with clustering and predict coins for users */
-void recommendation::recommendationClusteringPseudoUsers(int coinsReturned, errorCode& status){}
+void recommendation::recommendationClusteringPseudoUsers(int coinsReturned, errorCode& status){
+    vector<Item> sentimentPseudoUsers;
+    string currId;
+    int i, valid, j;
+    unordered_map<int, int> mapId; // Map real id with id in clusters
+    int numInsertion = 0;
+
+    status = SUCCESS;
+
+    /* Make clusters with the sentiment of the pseudo users */
+
+    cluster* sentimentPseudoUsersClusters;
+
+    /* Get sentiment of pseudo users */
+    for(i = 0; i < this->pseudoUsersSize; i++){
+
+        /* Discard invalid users */
+        valid = this->pseudoUsers[i].getStatus(status);
+        if(status != SUCCESS)
+            return;
+
+        /* Invalid pseudo user */
+        if(valid == 1)
+            continue;
+
+        /* Get sentiment */
+        vector<double>* sentimentPseudoUser;
+
+        sentimentPseudoUser = this->pseudoUsers[i].getSentiment(status);
+        if(status != SUCCESS)
+            return;
+
+        currId = to_string(i);
+
+        /* Fix map */
+        mapId.insert(make_pair(numInsertion, i));
+
+        /* Fix sentiment list */
+        sentimentPseudoUsers.push_back(Item(currId, *sentimentPseudoUser, status));
+        if(status != SUCCESS)
+            return;
+        numInsertion++;
+    } // End for
+
+    /* Create clusters */
+    sentimentPseudoUsersClusters = new cluster(status, sentimentPseudoUsers, this->coinsSize);
+    if(sentimentPseudoUsersClusters == NULL){
+        status = ALLOCATION_FAILED;
+        return;
+    }
+
+    if(status != SUCCESS){
+        delete sentimentPseudoUsersClusters;
+        return;
+    }
+
+    /* Fit clusters */
+    sentimentPseudoUsersClusters->fit(status);
+    if(status != SUCCESS){
+        delete sentimentPseudoUsersClusters;
+        return;
+    }
+
+    int minClusterPos; // Cluster of user
+    vector<vector<int> > clustersItems; // Get indexes of items in clusters
+
+    sentimentPseudoUsersClusters->getClustersItems(clustersItems, status);
+    if(status != SUCCESS){
+        delete sentimentPseudoUsersClusters;
+        return;
+    }
+
+    /* For every user predict coins */
+    for(i = 0; i < this->usersSize; i++){
+        vector<User*> neighborUsers;
+        vector<int> newCoins;
+        vector<int> neighborsIds;
+
+        /* Get status of user */
+        valid = this->users[i].getStatus(status);
+        if(status != SUCCESS){
+            delete sentimentPseudoUsersClusters;
+            return;
+        }
+
+        /* Invalid user */
+        if(valid == 1){
+            /* Recommend random coins */
+            this->users[i].recommend(coinsReturned, neighborUsers, newCoins, 1, status);
+            if(status != SUCCESS){
+                delete sentimentPseudoUsersClusters;
+                return;
+            }
+
+            /* Fix vector of predicted */
+            predictedClusteringPseudoUsers.push_back(newCoins);
+            continue;
+        }
+
+        /* Fix Item for user */
+        vector<double>* sentimentUser;
+
+        sentimentUser = this->users[i].getSentiment(status);
+        if(status != SUCCESS){
+            delete sentimentPseudoUsersClusters;
+            return;
+        }
+
+        currId = to_string(i);
+        Item query(*sentimentUser, status);
+
+        /* Find min cluster */
+        sentimentPseudoUsersClusters->getNearestCluster(query, minClusterPos, status);
+        if(status != SUCCESS){
+            delete sentimentPseudoUsersClusters;
+            return;
+        }
+
+        int neighborPos;
+
+        /*  Find neighbors of user */
+        for(j = 0; j < (int)clustersItems[minClusterPos].size(); j++){
+            neighborPos = clustersItems[minClusterPos][j];
+
+            neighborUsers.push_back(&(this->pseudoUsers[mapId[neighborPos]]));
+        } // End for - fix neighbors
+
+        /* Recommend coins */
+        this->users[i].recommend(coinsReturned, neighborUsers, newCoins, 1, status);
+        if(status != SUCCESS){
+            delete sentimentPseudoUsersClusters;
+            return;
+        }
+
+        /* Fix vector of predicted */
+        predictedClusteringUsers.push_back(newCoins);
+    } // End for
+
+    /* Delete model */
+    delete sentimentPseudoUsersClusters;
+}
 
 
 // PetropoulakisPanagiotis

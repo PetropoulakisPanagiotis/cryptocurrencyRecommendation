@@ -607,12 +607,55 @@ void cluster::getClustersItems(vector<vector<int> >& clustersItems, errorCode& s
     /* Discard current item           */
     list<int>::iterator iterInt;
 
-    for(iterInt = this->clustersItems[myClusterPos].begin(); iterInt !=  this->clustersItems[myClusterPos].begin(); iterInt++){
+    for(iterInt = this->clustersItems[myClusterPos].begin(); iterInt !=  this->clustersItems[myClusterPos].end(); iterInt++){
         if(*iterInt == index)
             continue;
 
         neighborsIds.push_back(stoi(this->items[*iterInt].getId()));
     } // End for copy items
 
+}
+
+/* Get position of nearest cluster of given item */
+void cluster::getNearestCluster(Item& query, int& minClusterPos, errorCode& status){
+    status = SUCCESS;
+
+    /* Check model */
+    if(this->fitted == -1){
+        status = INVALID_METHOD;
+        return;
+    }
+
+    if(this->fitted != 1){
+        status = METHOD_UNFITTED;
+        return;
+    }
+
+    int clusterPos;
+    double minDist, currDist;
+    int minClusterPosition;
+
+    /* Initialize minimum cluster */
+    minDist = this->distFunc(query, this->clusters[0], status);
+    if(status != SUCCESS)
+        return;
+    minClusterPos = 0;
+
+    /* Scan clusters */
+    for(clusterPos = 1; clusterPos < this->numClusters; clusterPos++){
+
+        /* Find current distance */
+        currDist = this->distFunc(query, this->clusters[clusterPos], status);
+        if(status != SUCCESS)
+            return;
+
+        if(currDist < minDist){
+            minDist = currDist;
+            minClusterPosition = clusterPos;
+        }
+    } // End for - scan clusters
+
+    /* Set parameters */
+    minClusterPos = minClusterPosition;
 }
 // Petropoulakis Panagiotis
