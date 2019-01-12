@@ -62,11 +62,17 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
 
     /* Create model */
     lshUsersModel = new lshCosine();
+    if(lshUsersModel == NULL){
+        status = ALLOCATION_FAILED;
+        return;
+    }
 
     /* Fit model */
     lshUsersModel->fit(sentimentUsers, status);
-    if(status != SUCCESS)
-            return;
+    if(status != SUCCESS){
+        delete lshUsersModel;
+        return;
+    }
 
     iterSentimentUsers = sentimentUsers.begin();
 
@@ -79,15 +85,19 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
 
         /* Get status of user */
         valid = this->users[i].getStatus(status);
-        if(status != SUCCESS)
+        if(status != SUCCESS){
+            delete lshUsersModel;
             return;
+        }
 
         /* Invalid user */
         if(valid == 1){
             /* Recommend random coins */
-            this->users[i].recommend(coinsReturned, neighborUsers, newCoins, status);
-            if(status != SUCCESS)
+            this->users[i].recommend(coinsReturned, neighborUsers, newCoins, 0, status);
+            if(status != SUCCESS){
+                delete lshUsersModel;
                 return;
+            }
 
             /* Fix vector of predicted */
             predictedLshUsers.push_back(newCoins);
@@ -97,8 +107,10 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
         }
         /* Find neighbors */
         lshUsersModel->simpleNeighbors(*iterSentimentUsers, neighborsIds, this->p, status);
-        if(status != SUCCESS)
+        if(status != SUCCESS){
+            delete lshUsersModel;
             return;
+        }
 
         /* Scan neighborsIds and fix neighbors users */
         for(iterNeighborsIds = neighborsIds.begin(); iterNeighborsIds != neighborsIds.end(); iterNeighborsIds++){
@@ -106,14 +118,19 @@ void recommendation::recommendationLshUsers(int coinsReturned, errorCode& status
         } // End for - scan neighborsIds
 
         /* Recommend coins */
-        this->users[i].recommend(coinsReturned, neighborUsers, newCoins, status);
-        if(status != SUCCESS)
+        this->users[i].recommend(coinsReturned, neighborUsers, newCoins, 0, status);
+        if(status != SUCCESS){
+            delete lshUsersModel;
             return;
+        }
 
         /* Fix vector of predicted */
         predictedLshUsers.push_back(newCoins);
         iterSentimentUsers++;
     } // End for - Predict coins for users
+
+    /* Delete model */
+    delete lshUsersModel;
 }
 
 /* Find neighbor pseudo users with lsh and predict coins for users */
@@ -158,11 +175,17 @@ void recommendation::recommendationLshPseudoUsers(int coinsReturned, errorCode& 
 
     /* Create model */
     lshPseudoUsersModel = new lshCosine();
+    if(lshPseudoUsersModel == NULL){
+        status = ALLOCATION_FAILED;
+        return;
+    }
 
     /* Fit model */
     lshPseudoUsersModel->fit(sentimentPseudoUsers, status);
-    if(status != SUCCESS)
-            return;
+    if(status != SUCCESS){
+        delete lshPseudoUsersModel;
+        return;
+    }
 
     iterSentimentPseudoUsers = sentimentPseudoUsers.begin();
 
@@ -176,15 +199,19 @@ void recommendation::recommendationLshPseudoUsers(int coinsReturned, errorCode& 
 
         /* Get status of user */
         valid = this->users[i].getStatus(status);
-        if(status != SUCCESS)
+        if(status != SUCCESS){
+            delete lshPseudoUsersModel;
             return;
+        }
 
         /* Invalid user */
         if(valid == 1){
             /* Recommend random coins */
             this->users[i].recommend(coinsReturned, neighborUsers, newCoins, 0, status);
-            if(status != SUCCESS)
+            if(status != SUCCESS){
+                delete lshPseudoUsersModel;
                 return;
+            } 
 
             /* Fix vector of predicted */
             predictedLshPseudoUsers.push_back(newCoins);
@@ -192,16 +219,20 @@ void recommendation::recommendationLshPseudoUsers(int coinsReturned, errorCode& 
         }
 
         sentimentUser = this->users[i].getSentiment(status);
-        if(status != SUCCESS)
+        if(status != SUCCESS){
+            delete lshPseudoUsersModel;
             return;
+        } 
 
         /* Convert user to item */
         Item userItem(*sentimentUser, status);
 
         /* Find neighbors */
         lshPseudoUsersModel->simpleNeighbors(userItem, neighborsIds, this->p, status);
-        if(status != SUCCESS)
+        if(status != SUCCESS){
+            delete lshPseudoUsersModel;
             return;
+        } 
 
         /* Scan neighborsIds and fix neighbors users */
         for(iterNeighborsIds = neighborsIds.begin(); iterNeighborsIds != neighborsIds.end(); iterNeighborsIds++){
@@ -210,15 +241,138 @@ void recommendation::recommendationLshPseudoUsers(int coinsReturned, errorCode& 
 
         /* Recommend coins */
         this->users[i].recommend(coinsReturned, neighborUsers, newCoins, 0, status);
-        if(status != SUCCESS)
+        if(status != SUCCESS){
+            delete lshPseudoUsersModel;
             return;
+        } 
 
         /* Fix vector of predicted */
         predictedLshPseudoUsers.push_back(newCoins);
     } // End for - Predict coins for users
 
+    /* Delete model */
+    delete lshPseudoUsersModel;
 }
-void recommendation::recommendationClusteringUsers(int coinsReturned, errorCode& status){}
+
+/* Find neighbor users with clustering and predict coins for users */
+void recommendation::recommendationClusteringUsers(int coinsReturned, errorCode& status){
+    vector<Item> sentimentUsers;
+    string currId;
+    int i, valid, j;
+    unordered_map<int, int> mapId; // Map real id with id in clusters
+    int numInsertion = 0;
+
+    status = SUCCESS;
+
+    /* Make clusters with the sentiment of the users */
+
+    cluster* sentimentUsersClusters;
+
+    /* Get sentiment of users */
+    for(i = 0; i < this->usersSize; i++){
+
+        /* Discard invalid users */
+        valid = this->users[i].getStatus(status);
+        if(status != SUCCESS)
+            return;
+
+        /* Invalid user */
+        if(valid == 1)
+            continue;
+
+        /* Get sentiment */
+        vector<double>* sentimentUser;
+
+        sentimentUser = this->users[i].getSentiment(status);
+        if(status != SUCCESS)
+            return;
+
+        currId = to_string(i);
+
+        /* Fix map */
+        mapId.insert(make_pair(i, numInsertion));
+
+        /* Fix sentiment list */
+        sentimentUsers.push_back(Item(currId, *sentimentUser, status));
+        if(status != SUCCESS)
+            return;
+        numInsertion++;
+    } // End for
+
+    /* Create clusters */
+    sentimentUsersClusters = new cluster(status, sentimentUsers, this->coinsSize);
+    if(sentimentUsersClusters == NULL){
+        status = ALLOCATION_FAILED;
+        return;
+    }
+
+    if(status != SUCCESS){
+        delete sentimentUsersClusters;
+        return;
+    }
+
+    /* Fit clusters */
+    sentimentUsersClusters->fit(status);
+    if(status != SUCCESS){
+        delete sentimentUsersClusters;
+        return;
+    }
+
+    /* FOr every user predict coins */
+    for(i = 0; i < this->usersSize; i++){
+        vector<User*> neighborUsers;
+        vector<int> newCoins;
+        vector<int> neighborsIds;
+
+        /* Get status of user */
+        valid = this->users[i].getStatus(status);
+        if(status != SUCCESS){
+            delete sentimentUsersClusters;
+            return;
+        }
+
+        /* Invalid user */
+        if(valid == 1){
+            /* Recommend random coins */
+            this->users[i].recommend(coinsReturned, neighborUsers, newCoins, 1, status);
+            if(status != SUCCESS){
+                delete sentimentUsersClusters;
+                return;
+            }
+
+            /* Fix vector of predicted */
+            predictedClusteringUsers.push_back(newCoins);
+            continue;
+        }
+
+        /*  Find neighbors of user */
+        sentimentUsersClusters->getNeighborsItem(mapId[i], neighborsIds, status);
+        if(status != SUCCESS){
+            delete sentimentUsersClusters;
+            return;
+        }
+
+        /* Scan neighborsIds and fix neighbors users */
+        for(j = 0; j < (int)neighborsIds.size(); j++){
+            neighborUsers.push_back(&(this->users[neighborsIds[j]]));
+        } // End for - scan neighborsIds
+
+        /* Recommend coins */
+        this->users[i].recommend(coinsReturned, neighborUsers, newCoins, 1, status);
+        if(status != SUCCESS){
+            delete sentimentUsersClusters;
+            return;
+        }
+
+        /* Fix vector of predicted */
+        predictedClusteringUsers.push_back(newCoins);
+    } // End for
+
+    /* Delete model */
+    delete sentimentUsersClusters;
+}
+
+/* Find neighbor users with clustering and predict coins for users */
 void recommendation::recommendationClusteringPseudoUsers(int coinsReturned, errorCode& status){}
 
 

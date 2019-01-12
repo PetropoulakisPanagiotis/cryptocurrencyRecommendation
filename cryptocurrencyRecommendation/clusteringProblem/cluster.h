@@ -74,6 +74,9 @@ class cluster{
 
         /* Get cluster items */
         void getClustersItems(std::vector<std::vector<int> >& clustersItems, errorCode& status);
+
+        /* Find items in the same cluster of given index and return ids */
+        void getNeighborsItem(int index, std::vector<int>& neighborsIds, errorCode& status);
 };
 
 /////////////////////////

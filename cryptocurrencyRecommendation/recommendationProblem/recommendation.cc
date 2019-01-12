@@ -60,6 +60,11 @@ recommendation::recommendation(vector<ItemToken>& tokenPosts, vector<Item>& vect
 
     /* Create clusters */
     this->clusterVectorPosts = new cluster(status, this->vectorPosts, k);
+    if(this->clusterVectorPosts == NULL){
+        status = ALLOCATION_FAILED;
+        return;
+    }
+
     if(status != SUCCESS){
         delete this->clusterVectorPosts;
         this->clusterVectorPosts = NULL;

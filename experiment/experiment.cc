@@ -54,7 +54,7 @@ int main(int argc, char **argv){
     }
 
     /* Fit model with lsh method */
-    recommendationModel->fitLsh(predictedLshUsers, predictedLshPseudoUsers, status);
+    recommendationModel->fitClustering(predictedLshUsers, predictedLshPseudoUsers, status);
     if(status != SUCCESS){
         printError(status);
         delete recommendationModel;

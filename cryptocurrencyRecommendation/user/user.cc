@@ -120,7 +120,7 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
     newCoins.clear();
 
     /* Check if user is invalid */
-    if(this->invalid == 1){
+    if(this->invalid == 1 || neighborUsers.size() == 0){
         /* Set random engine */
         unsigned seed = chrono::system_clock::now().time_since_epoch().count();
         default_random_engine generator(seed);
@@ -149,13 +149,8 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
     }
     else{
 
-        if(neighborUsers.size() == 0){
-            status = INVALID_USER_NEIGHBORS;
-            return;
-        }
-
         /* For every unkown coin predict user's behavior */
-        for(i = 0; i < this->unknownCoins.size(); i++){
+        for(i = 0; i < (int)this->unknownCoins.size(); i++){
             /* Known coin */
             if(this->unknownCoins[i] == 1)
                 continue;

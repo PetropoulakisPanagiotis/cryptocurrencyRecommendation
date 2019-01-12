@@ -149,7 +149,7 @@ cluster::cluster(errorCode& status, list<Item>& items, int k, int numClusters, s
     if(this->rangeModel != NULL){
         this->rangeModel->fit(items, status);
         if(status != SUCCESS)
-            return;  
+            return;
     }
 
     /* Success */
@@ -168,6 +168,8 @@ cluster::cluster(errorCode& status, vector<Item>& items, int numClusters, string
     fixCluster(status, items, numClusters, initAlgo, assignAlgo, updateAlgo, metrice, maxIter, tol);
     if(status != SUCCESS)
        return;
+
+    this->rangeModel = NULL;
 
     /* Success */
     this->fitted = 0;
@@ -324,7 +326,6 @@ void cluster::fit(errorCode& status){
         /////////////////////////////////
         /* Select assignment algorithm */
         /////////////////////////////////
-
         if(this->assignAlgo == "lloyd")
             terminate = this->lloydAssign(status);
         else
@@ -356,7 +357,6 @@ void cluster::fit(errorCode& status){
     for(itemPos = 0; itemPos < this->n; itemPos++){
         this->clustersItems[this->itemsClusters[itemPos]].push_back(itemPos);
     } // End for items
-
     /* Success */
     this->fitted = 1;
 }
@@ -573,5 +573,46 @@ void cluster::getClustersItems(vector<vector<int> >& clustersItems, errorCode& s
         for(iterInt = this->clustersItems[i].begin(); iterInt != this->clustersItems[i].end(); iterInt++)
             clustersItems[i].push_back(*iterInt);
     } // End for - fix clusters
+}
+
+/* Find items in the same cluster of given index and return ids */
+ void cluster::getNeighborsItem(int index, std::vector<int>& neighborsIds, errorCode& status){
+
+    status = SUCCESS;
+
+    /* Check model */
+    if(this->fitted == -1){
+        status = INVALID_METHOD;
+        return;
+    }
+
+    if(this->fitted != 1){
+        status = METHOD_UNFITTED;
+        return;
+    }
+
+    /* Check index */
+    if(index < 0 || index >= (int)this->items.size()){
+        status = INVALID_INDEX;
+        return;
+    }
+
+    /* Reset parameter */
+    neighborsIds.clear();
+
+    /* Find cluster of index */
+    int myClusterPos = this->itemsClusters[index];
+
+    /* Copy items for current cluster */
+    /* Discard current item           */
+    list<int>::iterator iterInt;
+
+    for(iterInt = this->clustersItems[myClusterPos].begin(); iterInt !=  this->clustersItems[myClusterPos].begin(); iterInt++){
+        if(*iterInt == index)
+            continue;
+
+        neighborsIds.push_back(stoi(this->items[*iterInt].getId()));
+    } // End for copy items
+
 }
 // Petropoulakis Panagiotis
