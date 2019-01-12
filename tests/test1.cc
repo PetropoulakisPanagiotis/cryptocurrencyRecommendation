@@ -1,15 +1,16 @@
+#include "catch.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
-#include "../itemToken/itemToken.h"
-#include "../utils/utils.h"
-#include "user.h"
+#include "../cryptocurrencyRecommendation/itemToken/itemToken.h"
+#include "../cryptocurrencyRecommendation/utils/utils.h"
+#include "../cryptocurrencyRecommendation/user/user.h"
 
 using namespace std;
 
-int main(void){
+TEST_CASE("Running user test","test1.cc"){
     errorCode status;
     vector<string> coins{"bitcoin", "xp", "eth", "urio"};
     vector<unordered_set<string> > allCoins({
@@ -52,7 +53,6 @@ int main(void){
 
     /* Create users */
     vector<int> idPosts;
-    vector<double>* sent;
 
     idPosts.push_back(0);
     idPosts.push_back(1);
@@ -63,59 +63,31 @@ int main(void){
     User* user2;
 
     user1 = new User(x, idPosts, allCoins, coins, lexicon, allPosts, status);
+    REQUIRE(status == SUCCESS);
 
     idPosts.clear();
     idPosts.push_back(2);
     idPosts.push_back(3);
 
     user2 = new User(5, idPosts, allCoins, coins, lexicon, allPosts, status);
+    REQUIRE(status == SUCCESS);
 
-    cout << "user1-id: " << user1->getId(status) << "\n";
-    cout << "user2-id: " << user2->getId(status) << "\n";
 
-    cout << "user1-total posts: " << user1->getSizeOfPosts(status) << "\n";
-    cout << "user2-total posts: " << user2->getSizeOfPosts(status) << "\n";
+    /* Check ids */
+    int id1, id2;
 
-    /* Print unknown coins */
-    vector<int>* unknownCoins1;
-    vector<int>* unknownCoins2;
-    int i;
+    id1 = user1->getId(status);
+    REQUIRE(status == SUCCESS);
+    REQUIRE(id1 == 0);
 
-    unknownCoins1 = user1->getUnknownCoins(status);
-    unknownCoins2 = user2->getUnknownCoins(status);
+    id2 = user2->getId(status);
+    REQUIRE(status == SUCCESS);
+    REQUIRE(id2 == 5);
 
-    for(i = 0; i < unknownCoins1->size(); i++){
-        cout << "user1-UC: " << unknownCoins1->at(i) << "\n";
-    }
-
-    cout << "\n";
-
-    for(i = 0; i < unknownCoins2->size(); i++){
-        cout << "user2-UC: " << unknownCoins2->at(i) << "\n";
-    }
-
-    cout << "\n\n";
-
-    /* Print sentiment */
-    vector<double>* s1;
-    vector<double>* s2;
-
-    s1 = user1->getSentiment(status);
-    s2 = user2->getSentiment(status);
-
-    for(i = 0; i < s1->size(); i++){
-        cout << "user1-S: " << s1->at(i) << "\n";
-    }
-
-    cout << "\n";
-
-    for(i = 0; i < s2->size(); i++){
-        cout << "user2-S: " << s2->at(i) << "\n";
-    }
 
     delete user1;
     delete user2;
-
-    return 0;
 }
-// PetropoulakisPanagiotis
+
+
+// Petropoulakis Panagiotis

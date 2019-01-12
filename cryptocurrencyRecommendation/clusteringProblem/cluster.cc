@@ -639,7 +639,8 @@ void cluster::getNearestCluster(Item& query, int& minClusterPos, errorCode& stat
     minDist = this->distFunc(query, this->clusters[0], status);
     if(status != SUCCESS)
         return;
-    minClusterPos = 0;
+
+    minClusterPosition = 0;
 
     /* Scan clusters */
     for(clusterPos = 1; clusterPos < this->numClusters; clusterPos++){

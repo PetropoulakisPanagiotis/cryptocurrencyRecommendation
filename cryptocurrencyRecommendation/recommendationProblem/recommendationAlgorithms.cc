@@ -418,7 +418,7 @@ void recommendation::recommendationClusteringPseudoUsers(int coinsReturned, erro
     } // End for
 
     /* Create clusters */
-    sentimentPseudoUsersClusters = new cluster(status, sentimentPseudoUsers, this->coinsSize);
+    sentimentPseudoUsersClusters = new cluster(status, sentimentPseudoUsers, this->coinsSize / 4);
     if(sentimentPseudoUsersClusters == NULL){
         status = ALLOCATION_FAILED;
         return;
@@ -474,14 +474,12 @@ void recommendation::recommendationClusteringPseudoUsers(int coinsReturned, erro
 
         /* Fix Item for user */
         vector<double>* sentimentUser;
-
         sentimentUser = this->users[i].getSentiment(status);
         if(status != SUCCESS){
             delete sentimentPseudoUsersClusters;
             return;
         }
 
-        currId = to_string(i);
         Item query(*sentimentUser, status);
 
         /* Find min cluster */
@@ -508,7 +506,7 @@ void recommendation::recommendationClusteringPseudoUsers(int coinsReturned, erro
         }
 
         /* Fix vector of predicted */
-        predictedClusteringUsers.push_back(newCoins);
+        this->predictedClusteringPseudoUsers.push_back(newCoins);
     } // End for
 
     /* Delete model */
