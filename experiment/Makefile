@@ -72,7 +72,9 @@ recommendationAlgorithms.o: ../cryptocurrencyRecommendation/recommendationProble
 	clean
 	check
 	run
-	crash
+	validate
+	crashRun
+	crashValidate
 
 clean:
 	rm -rf recommendation experiment.o experimentHelpers.o utils.o hashFunction.o item.o fileHandler.o lshEuclidean.o lshCosine.o hypercubeEuclidean.o hypercubeCosine.o cluster.o initAlgorithms.o assignAlgorithms.o updateAlgorithms.o clusterHelpers.o user.o userHelpers.o itemToken.o recommendation.o recommendationHelpers.o recommendationAlgorithms.o output.txt
@@ -83,5 +85,11 @@ check:
 run:
 	./recommendation -d sets/tweets_dataset_small.csv -v sets/twitter_dataset_small_vector.csv -c sets/coins_queries.csv -l sets/vader_lexicon.csv -o output.txt
 
-crash:
+validate:
+	./recommendation -d sets/tweets_dataset_small.csv -v sets/twitter_dataset_small_vector.csv -c sets/coins_queries.csv -l sets/vader_lexicon.csv -o output.txt -validate
+
+crashRun:
 	make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run && make run 
+
+crashValidate:
+	make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate && make validate  

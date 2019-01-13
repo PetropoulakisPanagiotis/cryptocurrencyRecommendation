@@ -28,14 +28,18 @@ class User{
 
         /* Recommend the best(p) coins in current user based on given neighbors */
         void recommend(int p, std::vector<User*>& neighborUsers, std::vector<int>& newCoins, int metrice, errorCode& status);
+        void recommend(int index, std::vector<User*>& neighborUsers, double& val, int metrice, errorCode& status);
 
         /* Accessors */
         int getId(errorCode& status);
         std::vector<int>* getIdPosts(errorCode& status);
         std::vector<double>* getSentiment(errorCode& status);
+        double getSentimentIndex(int index, errorCode& status);
         std::vector<int>* getUnknownCoins(errorCode& status);
         int getUnknownCoin(int index, errorCode& status);
         int getSizeOfPosts(errorCode& status);
         int getStatus(errorCode& status);
+
+        void removeCoin(int index, errorCode& status);
 };
 // PetropoulakisPanagiotis

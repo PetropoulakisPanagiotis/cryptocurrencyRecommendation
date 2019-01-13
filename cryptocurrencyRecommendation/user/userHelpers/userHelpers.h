@@ -14,7 +14,10 @@ typedef struct newCoinNode{
     int pos;
     double val;
 
-    newCoinNode(int pos, double val):pos(pos), val(val){}
+    newCoinNode(int pos, double val){
+        this->pos = pos;
+        this->val = val;
+    }
 }newCoinNode;
 
 /* Create a compare class based on val of coin node */

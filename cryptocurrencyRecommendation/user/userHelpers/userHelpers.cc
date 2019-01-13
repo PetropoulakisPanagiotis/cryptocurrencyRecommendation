@@ -269,7 +269,7 @@ double similarityFunc(std::vector<double>& x, std::vector<double>& y, int metric
             return -1;
         }
 
-        dist = dist /  mult;
+        dist = dist / mult;
 
         return dist;
     }

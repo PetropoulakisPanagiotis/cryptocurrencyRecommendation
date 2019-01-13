@@ -166,10 +166,71 @@ int main(int argc, char **argv){
     }
     /* Validate method */
     else{
+        double scoreA1, scoreA2, scoreB1, scoreB2;
+
+        cout << "Recommendation$: Validating lsh user method\n";
+
+        /* Create model */
+        beginTimer = chrono::steady_clock::now();
+        recommendationModel->validationLshUser(scoreA1, status);
+        if(status != SUCCESS){
+            printError(status);
+            delete recommendationModel;
+            return 0;
+        }
+        endTimer = chrono::steady_clock::now();
+
+        cout << "Recommendation$: Validation lsh user: " << scoreA1 << "[in: " << chrono::duration_cast<chrono::microseconds>(endTimer - beginTimer).count() / 1000000.0 << " sec]\n";
+
+        cout << "Recommendation$: Validating lsh pseudo user method\n";
+
+        /* Create model */
+        beginTimer = chrono::steady_clock::now();
+        recommendationModel->validationLshPseudoUser(scoreA2, status);
+        if(status != SUCCESS){
+            printError(status);
+            delete recommendationModel;
+            return 0;
+        }
+        endTimer = chrono::steady_clock::now();
+
+        cout << "Recommendation$: Validation lsh pseudo user: " << scoreA2 << "[in: " << chrono::duration_cast<chrono::microseconds>(endTimer - beginTimer).count() / 1000000.0 << " sec]\n";
+
+        cout << "Recommendation$: Validating clustering user method\n";
+
+        /* Create model */
+        beginTimer = chrono::steady_clock::now();
+        recommendationModel->validationClusteringUser(scoreB1, status);
+        if(status != SUCCESS){
+            printError(status);
+            delete recommendationModel;
+            return 0;
+        }
+        endTimer = chrono::steady_clock::now();
+
+        cout << "Recommendation$: Validation clustering user: " << scoreB1 << "[in: " << chrono::duration_cast<chrono::microseconds>(endTimer - beginTimer).count() / 1000000.0 << " sec]\n";
+
+        cout << "Recommendation$: Validating clustering pseudo user method\n";
+
+        /* Create model */
+        beginTimer = chrono::steady_clock::now();
+        recommendationModel->validationClusteringUser(scoreB2, status);
+        if(status != SUCCESS){
+            printError(status);
+            delete recommendationModel;
+            return 0;
+        }
+        endTimer = chrono::steady_clock::now();
+
+        cout << "Recommendation$: Validation clustering pseudo user: " << scoreB2 << "[in: " << chrono::duration_cast<chrono::microseconds>(endTimer - beginTimer).count() / 1000000.0 << " sec]\n";
 
 
+        /* Write results in file */
+        outputStream << "Cosine LSH Users Recommendation MAE: " << scoreA1 << "\n";
+        outputStream << "Cosine LSH Pseudo Users Recommendation MAE: " << scoreA2 << "\n";
+        outputStream << "Cosine Clustering Users Recommendation MAE: " << scoreB1 << "\n";
+        outputStream << "Cosine Clustering Pseudo Users Recommendation MAE: " << scoreB1 << "\n";
     }
-
 
     cout << "Recommendation$: Experiment is over. Have a good day!\n";
 

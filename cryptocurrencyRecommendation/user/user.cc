@@ -182,7 +182,7 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
             }
 
             /* Fix normalizing factor */
-            normalizingFactor = 1 / similaritySum;
+            normalizingFactor = 1 / simpleSimilaritySum;
             currVal = this->avgSentiment + (normalizingFactor * similaritySum);
 
             /* Add new coin in heap */
@@ -200,10 +200,83 @@ void User::recommend(int p, vector<User*>& neighborUsers, vector<int>& newCoins,
         if(p > totalUnknown)
             p = totalUnknown;
 
+        int coinPos;
+
         /* Exctract best p coins */
-        for(i = 0; i < p; i++)
-            newCoins.push_back(coinsHeap.front().pos);
+        for(i = 0; i < p; i++){
+            coinPos = coinsHeap.front().pos;
+            newCoins.push_back(coinPos);
+            pop_heap(coinsHeap.begin(), coinsHeap.end(), newCoinNodeCompare());
+        } // End for
+
+    } // End else
+}
+
+/* Recommend given coin in current user based on given neighbors */
+void User::recommend(int index, vector<User*>& neighborUsers, double& val, int metrice, errorCode& status){
+    int j; // Total unknown coins
+    double similaritySum = 0, normalizingFactor = 0, currVal, simpleSimilaritySum;
+
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_USER;
+        return;
     }
+
+    if(index < 0 || index >= (int)this->coins->size()){
+        status = INVALID_INDEX;
+        return;
+    }
+
+    if(metrice != 0 && metrice != 1){
+        status = INVALID_METRICE;
+        return;
+    }
+
+    /* Check if user is invalid */
+    if(this->invalid == 1 || neighborUsers.size() == 0){
+        val = 0;
+    }
+    else{
+
+        /* Known coin */
+        if(this->unknownCoins[index] == 1){
+            val = this->sentiment[index];
+            return;
+        }
+
+        /* Reset  */
+        similaritySum = 0;
+        simpleSimilaritySum = 0;
+
+        /* Scan users */
+        for(j = 0; j < (int)neighborUsers.size(); j++){
+
+            /* Discard invalid users */
+            if(neighborUsers[j]->invalid == 1)
+                continue;
+
+            currVal = similarityFunc(this->sentiment, neighborUsers[j]->sentiment, metrice, status);
+            if(status != SUCCESS)
+                return;
+
+            simpleSimilaritySum += currVal;
+
+            currVal = currVal * (neighborUsers[j]->sentiment[index] - neighborUsers[j]->avgSentiment);
+            similaritySum += currVal;
+        } // End for scan users
+
+        if(simpleSimilaritySum == 0){
+            status = DIV_OVERFLOW;
+            return;
+        }
+
+        /* Fix normalizing factor */
+        normalizingFactor = 1 / simpleSimilaritySum;
+        currVal = this->avgSentiment + (normalizingFactor * similaritySum);
+        val = currVal;
+    } // End else
 }
 
 ////////////////
@@ -247,6 +320,27 @@ vector<double>* User::getSentiment(errorCode& status){
     }
 
     return &this->sentiment;
+}
+
+/* Get sentiment index of the user */
+double User::getSentimentIndex(int index, errorCode& status){
+
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_USER;
+        return -1;
+    }
+
+    if(index < 0 || index >= (int)this->coins->size()){
+        status = INVALID_INDEX;
+        return -1;
+    }
+
+    if(this->invalid == 1)
+        return 0;
+
+    return this->sentiment[index];
 }
 
 /* Get indexes of unknown coins of the user */
@@ -304,4 +398,65 @@ int User::getStatus(errorCode& status){
 
     return this->invalid;
 }
+
+/* Remove coin from user */
+void User::removeCoin(int index, errorCode& status){
+
+    status = SUCCESS;
+
+    if(this->id == -1){
+        status = INVALID_USER;
+        return;
+    }
+
+    if(index < 0 || index >= (int)this->coins->size()){
+        status = INVALID_INDEX;
+        return;
+    }
+
+    if(this->invalid == 1)
+        return;
+
+    if(this->unknownCoins[index] == 0)
+        return;
+
+    /* Make it unknown coin */
+    this->unknownCoins[index] = 0;
+
+    /* Recalculate new avg sentiment */
+    double avg = 0;
+    int i, totalKnownCoins = 0;
+
+    for(i = 0; i < (int)this->coins->size(); i++){
+        if(this->unknownCoins[i] != 0){
+            avg += this->sentiment[i];
+            totalKnownCoins++;
+        }
+    } // End for
+    /* Is invalid */
+    if(totalKnownCoins == 0){
+        this->invalid = 1;
+        return;
+    }
+
+    avg = avg / (float)totalKnownCoins;
+
+    this->avgSentiment = avg;
+
+    /* Set unknown coins */
+    for(i = 0; i < (int)this->coins->size(); i++){
+        if(this->unknownCoins[i] == 0)
+            this->sentiment[i] = this->avgSentiment;
+    } // End for
+
+    int flag = 0;
+    for(i = 0; i < (int)this->coins->size(); i++){
+        if(this->sentiment[i] != 0)
+            flag = 1;
+    } // End for
+
+    if(flag == 0)
+        this->invalid = 1;
+}
+
 // PetropoulakisPanagiotis

@@ -224,8 +224,10 @@ void hypercubeEuclidean::radiusNeighbors(Item& query, int radius, list<Item>& ne
         if(i == 0)
             pos = initialPos;
         /* Extract min pos */
-        else
+        else{
             pos = neighborVertices.front().pos;
+            pop_heap(neighborVertices.begin(), neighborVertices.end(), verticesCompare());
+        }
 
         /* Empty vertice */
         if(this->cube[pos].size() == 0)
@@ -316,9 +318,10 @@ void hypercubeEuclidean::radiusNeighbors(Item& query, int radius, list<int>& nei
         if(i == 0)
             pos = initialPos;
         /* Extract min pos */
-        else
+        else{
             pos = neighborVertices.front().pos;
-
+            pop_heap(neighborVertices.begin(), neighborVertices.end(), verticesCompare());
+        }
         /* Empty vertice */
         if(this->cube[pos].size() == 0)
             continue;
@@ -399,8 +402,10 @@ void hypercubeEuclidean::nNeighbor(Item& query, Item& nNeighbor, double* neighbo
         if(i == 0)
             pos = initialPos;
         /* Extract min pos */
-        else
+        else{
             pos = neighborVertices.front().pos;
+            pop_heap(neighborVertices.begin(), neighborVertices.end(), verticesCompare());
+        }
 
         /* Empty vertice */
         if(this->cube[pos].size() == 0)
