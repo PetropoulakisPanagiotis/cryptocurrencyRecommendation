@@ -15,10 +15,10 @@ git clone https://github.com/PetropoulakisPanagiotis/cryptocurrencyRecommendatio
 ```
 
 ## Run experiment 
-$ make
-$ make run
-For validation: make validate
-Note: Validate method uses MAE score 
+$ make <br />
+$ make run <br />
+For validation: make validate <br />
+Note: Validate method uses <a herf="https://en.wikipedia.org/wiki/Mean_absolute_error">Mean Absolute Error</a> 
 ## Wiki
 * [Tutorial](https://github.com/PetropoulakisPanagiotis/neighbors-problem/wiki/Tutorial)
 
