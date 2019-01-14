@@ -39,7 +39,7 @@ git clone https://github.com/PetropoulakisPanagiotis/cryptocurrencyRecommendatio
 $ make <br />
 $ make run <br />
 For validation:<br/ >
-$ make validate <br />
+$ make validate <br/ >
 Note: Validate method uses [Mean Absolute Error](https://en.wikipedia.org/wiki/Mean_absolute_error)
 
 ## Author
