@@ -6,7 +6,7 @@
 
 ## Requirements
 * Compiler: g++ - C11 standard
-* <a href="https://github.com/catchorg/Catch2">Catch2</a> for testing 
+* [Catch2](https://github.com/catchorg/Catch2) for testing 
 
 ## Installation
 * Clone this repo to your local machine: 
@@ -18,7 +18,7 @@ git clone https://github.com/PetropoulakisPanagiotis/cryptocurrencyRecommendatio
 $ make <br />
 $ make run <br />
 For validation: make validate <br />
-Note: Validate method uses <a herf="https://en.wikipedia.org/wiki/Mean_absolute_error">Mean Absolute Error</a> 
+Note: Validate method uses [Mean Absolute Error](https://en.wikipedia.org/wiki/Mean_absolute_error)
 ## Wiki
 * [Tutorial](https://github.com/PetropoulakisPanagiotis/neighbors-problem/wiki/Tutorial)
 
