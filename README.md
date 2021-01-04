@@ -1,7 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ## Cryptocurrency Recommendation
-<p align="left">
-<img src="https://cdn-images-1.medium.com/max/800/1*slUzJEq_thaMXJhIT7iD3Q.jpeg" width="450px" height="235px"> <br /> <br />
+<p align="center">
+<img src="recommender.png" width="490px" height="320px"> <br /> <br />
 </p>
 
 Cryptocurrency Recommendation(User Based k-Nearest Neighbors). Every user has written some posts and he is represented by a sentiment vector. These posts are represented with two ways: tokenized form and vector form(Tfid). <br /> 
