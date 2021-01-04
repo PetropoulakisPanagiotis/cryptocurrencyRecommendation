@@ -38,6 +38,7 @@ git clone https://github.com/PetropoulakisPanagiotis/cryptocurrencyRecommendatio
 
 ## Replicate the results 
 ```
+$ cd experiment
 $ make
 $ make run
 ```
