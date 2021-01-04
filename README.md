@@ -36,7 +36,7 @@ Clustering is performed for pseudo users. In the next step for every user we fin
 git clone https://github.com/PetropoulakisPanagiotis/cryptocurrencyRecommendation.git
 ```
 
-## Run the experiment 
+## Replicate the results 
 ```
 $ make
 $ make run
