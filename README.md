@@ -8,6 +8,7 @@
 1. [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search)
 2. [clustering](https://github.com/PetropoulakisPanagiotis/clustering)
 
+# Explanation 
 Cryptocurrency Recommendation(User Based k-Nearest Neighbors). Every user has written some posts and he is represented by a sentiment vector. These posts are represented with two ways: tokenized form and vector form(Tfid). <br /> 
 There are 4 available methods: <br />
 * Recommendation via k-nearest neighbors with lsh[1]
