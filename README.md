@@ -30,21 +30,22 @@ First of all, clustering is performed. After that k-nearest neighbors for every 
 ## [4] Method - Clustering - Pseudo Users
 Clustering is performed for pseudo users. In the next step for every user we find the nearest cluster and then the k-nearest neighbors of this user reside in the nearest cluster. 
 
-## Requirements
-* Compiler: g++ - C11 standard
-* [Catch2](https://github.com/catchorg/Catch2) for testing 
-
 ## Installation
-* Clone this repo to your local machine: 
+* Clone this repository to your local machine: 
 ```
 git clone https://github.com/PetropoulakisPanagiotis/cryptocurrencyRecommendation.git
 ```
 
-## Run experiment 
+## Run the experiment 
+```
 $ make <br />
 $ make run <br />
+```
+
 For validation: <br />
+```
 $ make validate <br />
+```
 Note: Validate method uses [Mean Absolute Error](https://en.wikipedia.org/wiki/Mean_absolute_error)
 
 ## Author
