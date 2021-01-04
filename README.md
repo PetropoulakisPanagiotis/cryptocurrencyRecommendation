@@ -38,8 +38,8 @@ git clone https://github.com/PetropoulakisPanagiotis/cryptocurrencyRecommendatio
 
 ## Run the experiment 
 ```
-$ make <br />
-$ make run <br />
+$ make
+$ make run
 ```
 
 ## Author
