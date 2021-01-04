@@ -1,5 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-## Cryptocurrency Recommendation
+## Cryptocurrency Recommendation based on Tweets
 <p align="center">
 <img src="recommender.png" width="720px" height="450px"> <br /> <br />
 </p>
