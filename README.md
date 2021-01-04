@@ -3,8 +3,7 @@
 <p align="center">
 <img src="recommender.png" width="720px" height="450px"> <br /> <br />
 </p>
-
-NOTE: this assigment is based on two previous projects. Refer to them at first: 
+Note: this assigment is based on two previous projects. Refer to them at first: 
 * 1. [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search)
 * 2. [clustering](https://github.com/PetropoulakisPanagiotis/clustering)
 
