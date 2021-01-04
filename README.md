@@ -31,7 +31,7 @@ First of all, clustering is performed. After that k-nearest neighbors for every 
 Clustering is performed for pseudo users. In the next step for every user we find the nearest cluster and then the k-nearest neighbors of this user reside in the nearest cluster. 
 
 ## Installation
-* Clone this repository to your local machine: 
+Clone this repository to your local machine: 
 ```
 git clone https://github.com/PetropoulakisPanagiotis/cryptocurrencyRecommendation.git
 ```
