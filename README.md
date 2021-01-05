@@ -23,10 +23,13 @@ where totalscore is the total sum of the corresponding scores(vader lexicon) of 
 
 The Cruptocurrenct Recommendation is performed in 4 different ways:
 1. Recommend to user k new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques based on the Uj vectors
-2. Perform clustering on users Uj vectors. Recommend to user k new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques based on the Uj vectors that reside in the same cluster
+2. Perform clustering on users Uj vectors. Recommend to user k new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search)  that reside in the same cluster
 3. Perdorm clustering on users using the TFIDF representation. Each cluster "forms" a pseudo user with a Uj sentiment vector. Recommend to user k new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques based on the next Uj vectors of pseudo users
-4. Perdorm clustering on users using the TFIDF representation. Each cluster "forms" a pseudo user with a Uj sentiment vector.
+4. Perdorm clustering on users using the TFIDF representation. 
 
+Each cluster "forms" a pseudo user with a Uj sentiment vector. Then, perform clustering on pseudo users using their Uj vectors. recomend based on closest cluster. 
+p best coins recommend 
+users class recommend()function that takes neighors and reaturns the best.
 ## Installation
 Clone this repository to your local machine: 
 ```
