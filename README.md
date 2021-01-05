@@ -18,7 +18,7 @@ We have a set of tweets(T), N users and there are four additional files:
 :zap:Assumption: each tweet refers only to a specific Bitcoin
 
 At first, we calculate a sentiment vector Ui for every user. This vector has K dimensions and every cell corresponds to a specific bitcoin. Each cell contains a sentiment score([-1,1]) that represents the sentiment of a specific user for a specific Bitcoin. The sentiment score is calculated as follows: <br />
-<p align="center">
+<p align="left">
 <img src="http://latex.codecogs.com/svg.latex?S_i&space;=&space;\frac{totalscore}{\sqrt{totalscore^2&space;&plus;&space;15}}&space;&space;" title="http://latex.codecogs.com/svg.latex?S_i = \frac{totalscore}{\sqrt{totalscore^2 + 15}} " />,</p> 
 where totalscore is the total sum of the corresponding scores(vader lexicon) of every word/symbol of all the tweets that refer to Bitcoin i.
 
