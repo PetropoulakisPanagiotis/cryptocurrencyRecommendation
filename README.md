@@ -17,6 +17,7 @@ We have a set of tweets(T) and N users. There are four files:
 :zap:Assumptions: each tweet refers only to a specific bitcoin
 
 At first, we calculate a sentiment vector Uj for every user. This vector has K dimensions and every cell corresponds to a specific bitcoin. Each cell contains a sentiment score([-1,1]) that represents the sentiment of a specific user for the current bitcoin. The sentiment score is calculated as follows: 
+
 <div class="equation" align="center" data-raw-text="S_i = /div{totalscore}{\sqrt{totalscore^2 + 15}}" data-equation="eq:principal_square_root">
 
 
