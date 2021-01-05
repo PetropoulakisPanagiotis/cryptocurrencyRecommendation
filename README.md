@@ -33,6 +33,7 @@ Clone this repository to your local machine:
 ```
 git clone https://github.com/PetropoulakisPanagiotis/cryptocurrencyRecommendation.git
 ```
+:zap:To run the tests, first download [Catch2](https://github.com/catchorg/Catch2). 
 
 ## Replicate the results 
 ```
