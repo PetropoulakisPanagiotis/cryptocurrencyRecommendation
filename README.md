@@ -22,10 +22,10 @@ At first, we calculate a sentiment vector Uj for every user. This vector has K d
 where totalscore is the total sum of the corresponding scores(vader lexicon) of every word/symbol of all the tweets that refer to Bitcoin i.
 
 The Cruptocurrenct Recommendation is performed in 4 different ways:
-1. Recommend to user j new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques based on the Uj vectors
-2. Perform clusterin on users Uj vectors. Recommend to user j new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques based on the Uj vectors that reside in the same cluster
-3. Perdorm clustering on users using the tfidf representation. Recommend to user j new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques based on the Uj vectors that reside in the same cluster
-4.
+1. Recommend to user k new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques based on the Uj vectors
+2. Perform clustering on users Uj vectors. Recommend to user k new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques based on the Uj vectors that reside in the same cluster
+3. Perdorm clustering on users using the TFIDF representation. Each cluster "forms" a pseudo user with a Uj sentiment vector. Recommend to user k new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques based on the next Uj vectors of pseudo users
+4. Perdorm clustering on users using the TFIDF representation. Each cluster "forms" a pseudo user with a Uj sentiment vector.
 
 ## Installation
 Clone this repository to your local machine: 
