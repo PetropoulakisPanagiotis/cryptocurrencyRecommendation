@@ -10,10 +10,10 @@
 
 # Explanation 
 We have a set of tweets(T) and N users. There are four files:
-1. ./sets/tweets_dataset_small.csv contains the tokenized(preprocessed) tweets
-2. ./sets/twitter_dataset_small_vector.csv contains the corresponding tfidf reprsentation of these tweets
-3. ./sets/coins_queries.csv contains K bitcoins
-4. ./sets/vader_lexicon.csv contains words/symbols with a corresponding sentiment score
+1. ./sets/tweets_dataset_small.csv that contains the tokenized(preprocessed) tweets
+2. ./sets/twitter_dataset_small_vector.csv that contains the corresponding tfidf reprsentation of these tweets
+3. ./sets/coins_queries.csv that contains K bitcoins
+4. ./sets/vader_lexicon.csv that contains words/symbols with a corresponding sentiment score
 :zap:Assumptions: each tweet refers only to a specific bitcoin
 
 At first, we calculate a sentiment vector Uj for every user. This vector has K dimensions and every cell corresponds to a specific bitcoin. Each cell contains a sentiment score([-1,1]) that represents the sentiment of a specific user for the current bitcoin. The sentiment score is calculated as follows: <br />
