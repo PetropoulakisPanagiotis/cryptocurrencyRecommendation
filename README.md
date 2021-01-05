@@ -20,6 +20,7 @@ At first, we calculate a sentiment vector Uj for every user. This vector has K d
 
 <div class="equation" align="center" data-raw-text="S_i = /div{totalscore}{\sqrt{totalscore^2 + 15}}" data-equation="eq:principal_square_root">
 
+<div class="equation" align="center" data-raw-text="\sqrt{x^2} = \begin{matrix} x, &amp; \textrm{if}\ x \geq 0\end{matrix}" data-equation="eq:principal_square_root">
 
 
 
