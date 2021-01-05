@@ -9,7 +9,7 @@
 2. [clustering](https://github.com/PetropoulakisPanagiotis/clustering)
 
 # Explanation 
-We have a set of tweets(T), N users and there are four files:
+We have a set of tweets(T), N users and there are four additional files:
 1. ./sets/tweets_dataset_small.csv that contains the tokenized(preprocessed) tweets
 2. ./sets/twitter_dataset_small_vector.csv that contains the corresponding TFIDF representation of these tweets
 3. ./sets/coins_queries.csv that contains K bitcoins
