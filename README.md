@@ -17,8 +17,7 @@ We have a set of tweets(T) and N users. There are four files:
 :zap:Assumptions: each tweet refers only to a specific bitcoin
 
 At first, we calculate a sentiment vector Uj for every user. This vector has K dimensions and every cell corresponds to a specific bitcoin. Each cell contains a sentiment score([-1,1]) that represents the sentiment of a specific user for the current bitcoin. The sentiment score is calculated as follows: 
-	<img src="https://latex.codecogs.com/gif.latex?\dpi{400}\S_i = \frac{totalscore}{\sqrt{totalscore^2 + 15}} " alt="Principal square root definition.">
-
+<img src="http://latex.codecogs.com/svg.latex?S_i&space;=&space;\frac{totalscore}{\sqrt{totalscore^2&space;&plus;&space;15}}&space;&space;" title="http://latex.codecogs.com/svg.latex?S_i = \frac{totalscore}{\sqrt{totalscore^2 + 15}} " />
 
 Cryptocurrency Recommendation(User Based k-Nearest Neighbors). Every user has written some posts and he is represented by a sentiment vector. These posts are represented with two ways: tokenized form and vector form(Tfid). <br /> 
 There are 4 available methods: <br />
