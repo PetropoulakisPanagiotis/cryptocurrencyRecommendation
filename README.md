@@ -19,7 +19,7 @@ We have a set of tweets(T), N users and there are four additional files:
 
 At first, we calculate a sentiment vector Ui for every user. This vector has K dimensions and every cell corresponds to a specific bitcoin. Each cell contains a sentiment score([-1,1]) that represents the sentiment of a specific user for a specific Bitcoin. The sentiment score is calculated as follows: <br />
 
-<img src="http://latex.codecogs.com/svg.latex?S_i&space;=&space;\frac{totalscore}{\sqrt{totalscore^2&space;&plus;&space;15}}&space;&space;" title="http://latex.codecogs.com/svg.latex?S_i = \frac{totalscore}{\sqrt{totalscore^2 + 15}}" ,/><br /> 
+<img src="http://latex.codecogs.com/svg.latex?S_i&space;=&space;\frac{totalscore}{\sqrt{totalscore^2&space;&plus;&space;15}}&space;&space;" title="http://latex.codecogs.com/svg.latex?S_i = \frac{totalscore}{\sqrt{totalscore^2 + 15}}," /><br /> 
 The totalscore is the total sum of the corresponding scores(vader lexicon) of every word/symbol of all the tweets that refer to Bitcoin i.
 
 The Cryptocurrency Recommendation is performed in 4 different ways:
