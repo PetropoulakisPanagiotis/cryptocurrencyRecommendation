@@ -17,7 +17,7 @@ We have a set of tweets(T) and N users. There are four files:
 :zap:Assumptions: each tweet refers only to a specific bitcoin
 
 At first, we calculate a sentiment vector Uj for every user. This vector has K dimensions and every cell corresponds to a specific bitcoin. Each cell contains a sentiment score([-1,1]) that represents the sentiment of a specific user for the current bitcoin. The sentiment score is calculated as follows: <br />
-<img align="left" src="http://latex.codecogs.com/svg.latex?S_i&space;=&space;\frac{totalscore}{\sqrt{totalscore^2&space;&plus;&space;15}}&space;&space;" title="http://latex.codecogs.com/svg.latex?S_i = \frac{totalscore}{\sqrt{totalscore^2 + 15}} " />, <br /><br />
+<img align="center" src="http://latex.codecogs.com/svg.latex?S_i&space;=&space;\frac{totalscore}{\sqrt{totalscore^2&space;&plus;&space;15}}&space;&space;" title="http://latex.codecogs.com/svg.latex?S_i = \frac{totalscore}{\sqrt{totalscore^2 + 15}} " />, <br /><br />
 where totalscore is the total sum of the corresponding score for evey word/symbol that exists in the vader laxicon(for all the tweets of a specific user for a specific bitcoin). 
 
 Cryptocurrency Recommendation(User Based k-Nearest Neighbors). Every user has written some posts and he is represented by a sentiment vector. These posts are represented with two ways: tokenized form and vector form(Tfid). <br /> 
