@@ -26,7 +26,7 @@ The Cryptocurrency Recommendation is performed in 4 different ways:
 1. Recommend to user j new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques to find their nearest neighbors based on the Ui vectors.
 2. Perform clustering on users' Ui vectors. Recommend to user j new Bitcoins using his nearest neighbors that reside in the same cluster.
 3. Perform clustering on tweets using their TFIDF representation. Each cluster "forms" a pseudo-user with a new Ui sentiment vector. Recommend to user j new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques to find their nearest neighbors based on the new Ui vectors of the pseudo-users.
-4. Perform clustering on tweets using their TFIDF representation. Each cluster "forms" a pseudo-user with a new Ui sentiment vector. After that, perform clustering on pseudo-users Ui vectors. Recommend to user j new Bitcoins using his nearest neighbors that reside in the same(previous) cluster. 
+4. Perform clustering on tweets using their TFIDF representation. Each cluster "forms" a pseudo-user with a new Ui sentiment vector. After that, perform clustering on pseudo-users' Ui vectors. Recommend to user j new Bitcoins using his nearest neighbors that reside in the same(previous) cluster. 
 
 ## Installation
 Clone this repository to your local machine: 
