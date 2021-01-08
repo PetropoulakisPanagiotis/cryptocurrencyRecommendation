@@ -22,7 +22,7 @@ At first, we calculate a sentiment vector Ui for every user. This vector has K d
 <img src="http://latex.codecogs.com/svg.latex?S_i&space;=&space;\frac{totalscore}{\sqrt{totalscore^2&space;&plus;&space;15}}&space;&space;" title="http://latex.codecogs.com/svg.latex?S_i = \frac{totalscore}{\sqrt{totalscore^2 + 15}}" /><br /> 
 The totalscore is the total sum of the corresponding sentiment score(vader lexicon) of each word/symbol of all the tweets that refer to Bitcoin i.
 
-The Cryptocurrency Recommendation is performed in 4 different ways:
+The Cryptocurrency Recommendation contains 4 different methods:
 1. Recommend to user j new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques to find their nearest neighbors based on the Ui vectors.
 2. Perform clustering on users' Ui vectors. Recommend to user j new Bitcoins using his nearest neighbors that reside in the same cluster.
 3. Perform clustering on tweets using their TFIDF representation. Each cluster "forms" a pseudo-user with a new Ui sentiment vector. Recommend to user j new Bitcoins using [nearest-neighbor-search](https://github.com/PetropoulakisPanagiotis/nearest-neighbor-search) techniques to find their nearest neighbors based on the new Ui vectors of the pseudo-users.
